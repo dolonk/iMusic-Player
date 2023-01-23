@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Model.Ui.PlayerActivity">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/backBtnID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:padding="@dimen/_5sdp"
+            app:srcCompat="@drawable/back_icon"
+            app:iconSize="@dimen/_30sdp"
+            />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/_5sdp"
+            android:text="iMusic Player Playing"
+            android:textSize="@dimen/_14ssp" />
+
+        <ImageView
+            android:id="@+id/favouriteListID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:padding="@dimen/_5sdp"
+            app:srcCompat="@drawable/favourite_icon" />
+    </LinearLayout>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/songPicID"
+        android:layout_width="@dimen/_250sdp"
+        android:layout_height="@dimen/_250sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:shapeAppearanceOverlay="@style/Curve"
+        app:srcCompat="@drawable/music_icon"
+        app:strokeColor="@color/teal_200"
+        app:strokeWidth="@dimen/_5sdp"
+        tools:ignore="ImageContrastCheck,VisualLintBounds" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="@dimen/_250sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:gravity="center"
+        android:hint="Song Tittle"
+        android:padding="@dimen/_5sdp"
+        android:textSize="@dimen/_14ssp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/songPicID"
+        app:layout_constraintStart_toStartOf="@+id/songPicID"
+        app:layout_constraintTop_toBottomOf="@+id/songPicID"
+        tools:ignore="VisualLintBounds" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="@dimen/_250sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/songPicID"
+        app:layout_constraintStart_toStartOf="@+id/songPicID"
+        app:layout_constraintTop_toBottomOf="@+id/textView3"
+        tools:ignore="VisualLintBounds">
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/previousSongID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            app:icon="@drawable/navigate_previous_back"
+            app:iconGravity="start"
+            app:iconSize="@dimen/_30sdp" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/PlayPauseID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:backgroundTint="@color/pink_color"
+            app:icon="@drawable/pause_icon"
+            app:iconSize="@dimen/_40sdp"
+            app:iconTint="@color/white"
+            app:shapeAppearanceOverlay="@style/Curve" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/songNextID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            app:icon="@drawable/navigate_next_icon"
+            app:iconGravity="end"
+            app:iconSize="@dimen/_30sdp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        tools:ignore="VisualLintBounds">
+
+        <TextView
+            android:id="@+id/timeCountID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="00.00"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_15sdp"
+            tools:ignore="TextSizeCheck" />
+
+        <SeekBar
+            android:id="@+id/seekBar2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="loading"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_15sdp"
+            tools:ignore="TextSizeCheck" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+
+        <ImageView
+            android:id="@+id/repeatID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:padding="@dimen/_5sdp"
+            app:srcCompat="@drawable/repeat_icon" />
+
+        <ImageView
+            android:id="@+id/equalizeID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:padding="@dimen/_5sdp"
+            app:srcCompat="@drawable/equalizer_icon" />
+
+        <ImageView
+            android:id="@+id/timerID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:padding="@dimen/_5sdp"
+            app:srcCompat="@drawable/timer_icon" />
+
+        <ImageView
+            android:id="@+id/shareID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:padding="@dimen/_5sdp"
+            app:srcCompat="@drawable/share_icon" />
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
