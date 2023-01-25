@@ -10,14 +10,13 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_15sdp"
+        android:background="@color/blue"
         android:gravity="center"
         android:orientation="horizontal"
-        android:background="@color/blue"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UseCompoundDrawables">
 
         <ImageView
             android:id="@+id/backBtnID"
@@ -29,17 +28,19 @@
             android:padding="@dimen/_5sdp"
             app:iconSize="@dimen/_30sdp"
             app:srcCompat="@drawable/back_icon"
-            tools:ignore="ImageContrastCheck" />
+            tools:ignore="ContentDescription,ImageContrastCheck" />
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
+            android:layout_weight="0.5"
+            android:layout_marginLeft="@dimen/_50sdp"
             android:padding="@dimen/_5sdp"
             android:text="Favourite Song List"
-            android:textSize="@dimen/_14ssp" />
+            android:textColor="#F50057"
+            android:textSize="@dimen/_14ssp"
+            tools:ignore="HardcodedText" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -55,7 +56,7 @@
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="355dp"
+        android:layout_marginStart="@dimen/_220sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginEnd="@dimen/_30sdp"
         android:layout_marginBottom="@dimen/_50sdp"
@@ -66,6 +67,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recyclerView"
         app:srcCompat="@drawable/shuffle_icon"
-        tools:ignore="ImageContrastCheck,SpeakableTextPresentCheck" />
+        tools:ignore="ContentDescription,ImageContrastCheck,SpeakableTextPresentCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

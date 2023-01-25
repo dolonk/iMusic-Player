@@ -10,12 +10,10 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_15sdp"
         android:gravity="center"
         android:orientation="horizontal"
         android:background="@color/blue"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -36,7 +34,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
+            android:layout_marginLeft="@dimen/_50sdp"
             android:padding="@dimen/_5sdp"
             android:text="PlayList Song"
             android:textSize="@dimen/_14ssp" />
@@ -55,7 +53,7 @@
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="355dp"
+        android:layout_marginStart="@dimen/_220sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginEnd="@dimen/_30sdp"
         android:layout_marginBottom="@dimen/_50sdp"
@@ -67,5 +65,4 @@
         app:layout_constraintTop_toBottomOf="@+id/recyclerView"
         app:srcCompat="@drawable/add_icon"
         tools:ignore="ImageContrastCheck,SpeakableTextPresentCheck" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

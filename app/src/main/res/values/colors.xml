@@ -10,9 +10,9 @@
 
 
     <!--    Custom Colors-->
-    <color name="purple_color">#DA03D6</color>
-    <color name="green_color">#64DD17</color>
-    <color name="pink_color">#F50057</color>
+    <color name="purple_color">#A020F0</color>
+    <color name="green_color">#00FF00</color>
+    <color name="pink_color">#FFC0CB</color>
     <color name="yellow_color">#FFD600</color>
-    <color name="blue">#53CFBC</color>
+    <color name="blue">#0000FF</color>
 </resources>

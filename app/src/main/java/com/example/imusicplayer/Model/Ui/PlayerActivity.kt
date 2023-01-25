@@ -7,6 +7,7 @@ import com.example.imusicplayer.R
 class PlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.coolPinkNav)
         setContentView(R.layout.activity_player)
     }
 }

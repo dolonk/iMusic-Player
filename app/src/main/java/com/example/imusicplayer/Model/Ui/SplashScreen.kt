@@ -16,6 +16,7 @@ class SplashScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
         supportActionBar?.hide()
+        setTheme(R.style.splash_screen)
         mProgress = findViewById(R.id.progressBarID)
 
         Thread {
@@ -28,7 +29,7 @@ class SplashScreen : AppCompatActivity() {
     private fun doWork() {
         while (progressBarStatus < 100) {
             try {
-                time += 10
+                time += 55
                 Thread.sleep(1000)
             } catch (e: InterruptedException) {
                 e.printStackTrace()
