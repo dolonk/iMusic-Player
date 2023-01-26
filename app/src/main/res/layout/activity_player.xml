@@ -106,7 +106,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_10sdp"
-            android:backgroundTint="@color/pink_color"
+            android:backgroundTint="@color/orange"
             app:icon="@drawable/pause_icon"
             app:iconSize="@dimen/_40sdp"
             app:iconTint="@color/white"
