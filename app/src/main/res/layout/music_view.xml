@@ -27,6 +27,7 @@
                 android:layout_height="@dimen/_50sdp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:layout_marginLeft="@dimen/_5sdp"
+                android:src="@drawable/music_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
