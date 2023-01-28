@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.imusicplayer.Model.Ui.PlayerActivity.Companion.mediaPlayer
+import com.example.imusicplayer.Model.Ui.PlayerActivity.Companion.musicListPa
+import com.example.imusicplayer.Model.Ui.PlayerActivity.Companion.songPosition
 import com.example.imusicplayer.R
 import com.example.imusicplayer.Service.Domain.DomainMusic
 import com.example.imusicplayer.databinding.ActivityPlayerBinding
@@ -22,15 +25,39 @@ class PlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
-        setTheme(R.style.coolPinkNav)
+        setTheme(R.style.coolPink)
         setContentView(binding.root)
 
-        startSong()
-        initializeLayout()
-        setPlayPauseSong()
+        initializeData()
+        setPlayPauseSongId()
+        setPreviousNextSong()
     }
 
-    private fun setPlayPauseSong() {
+    private fun setPreviousNextSong() {
+        binding.pPreviousSongID.setOnClickListener {
+            setSongPosition(increment = false)
+            setLayout()
+            createdMediaPlayer()
+        }
+        binding.pSongNextID.setOnClickListener {
+            setSongPosition(increment = true)
+            setLayout()
+            createdMediaPlayer()
+        }
+    }
+
+    private fun setSongPosition(increment: Boolean) {
+        if (increment) {
+            if (musicListPa.size - 1 == songPosition)
+                songPosition = 0
+            else ++songPosition
+        } else
+            if (0 == songPosition)
+                songPosition = musicListPa.size - 1
+            else --songPosition
+    }
+
+    private fun setPlayPauseSongId() {
         binding.pPlayPauseID.setOnClickListener {
             if (isPlaying) setPauseSong()
             else setPlaySong()
@@ -49,32 +76,45 @@ class PlayerActivity : AppCompatActivity() {
         mediaPlayer!!.start()
     }
 
-    private fun initializeLayout() {
+    private fun setLayout() {
         Glide.with(this).load(musicListPa[songPosition].imageUri)
             .apply(RequestOptions().placeholder(R.drawable.music_icon))
             .into(binding.pSongPicID)
         binding.pSongTittleID.text = musicListPa[songPosition].title
     }
 
-    private fun startSong() {
-        try {
-            songPosition = intent.getIntExtra("index", 0)
-            when (intent.getStringExtra("class")) {
-                "MusicAdapter" -> {
-                    musicListPa = ArrayList()
-                    musicListPa.addAll(MainActivity.MusicListMA)
 
-                    if (mediaPlayer == null) mediaPlayer = MediaPlayer()
-                    mediaPlayer!!.reset()
-                    mediaPlayer!!.setDataSource(musicListPa[songPosition].path)
-                    mediaPlayer!!.prepare()
-                    mediaPlayer!!.start()
-                    isPlaying = true
-                    binding.pPlayPauseID.setIconResource(R.drawable.pause_icon)
-                }
+    private fun initializeData() {
+        songPosition = intent.getIntExtra("index", 0)
+        when (intent.getStringExtra("class")) {
+            "MusicAdapter" -> {
+                musicListPa = ArrayList()
+                musicListPa.addAll(MainActivity.MusicListMA)
+                setLayout()
+                createdMediaPlayer()
             }
+            "MainActivity"->{
+                musicListPa = ArrayList()
+                musicListPa.addAll(MainActivity.MusicListMA)
+                musicListPa.shuffle()
+                setLayout()
+                createdMediaPlayer()
+            }
+        }
+    }
+
+    private fun createdMediaPlayer() {
+        try {
+            if (mediaPlayer == null) mediaPlayer = MediaPlayer()
+            mediaPlayer!!.reset()
+            mediaPlayer!!.setDataSource(musicListPa[songPosition].path)
+            mediaPlayer!!.prepare()
+            mediaPlayer!!.start()
+            isPlaying = true
+            binding.pPlayPauseID.setIconResource(R.drawable.pause_icon)
         } catch (e: Exception) {
             return
         }
     }
+
 }

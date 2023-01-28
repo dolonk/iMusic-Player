@@ -26,8 +26,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var musicAdapter: MusicAdapter
 
-    companion object{
-        lateinit var  MusicListMA: ArrayList<DomainMusic>
+    companion object {
+        lateinit var MusicListMA: ArrayList<DomainMusic>
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,13 +36,25 @@ class MainActivity : AppCompatActivity() {
         setTheme(R.style.coolPinkNav)
         setContentView(binding.root)
 
-        requestPermission()
         navigationBar()
         btnInitial()
         initialNavView()
-        setRecyclerView()
-        getAllMusic()
+        if (requestPermission()){
+            setRecyclerView()
+        }
 
+    }
+
+
+    @SuppressLint("SetTextI18n")
+    private fun setRecyclerView() {
+        MusicListMA = getAllMusic()
+        binding.mainRecyclerID.setHasFixedSize(true)
+        binding.mainRecyclerID.setItemViewCacheSize(13)
+        binding.mainRecyclerID.layoutManager = LinearLayoutManager(this@MainActivity)
+        musicAdapter = MusicAdapter(this@MainActivity, MusicListMA)
+        binding.mainRecyclerID.adapter = musicAdapter
+        binding.mainTotalSongsID.text = "Total Song: " + musicAdapter.itemCount
     }
 
     @SuppressLint("Range")
@@ -67,39 +79,45 @@ class MainActivity : AppCompatActivity() {
         if (cursor != null) {
             if (cursor.moveToFirst())
                 do {
-                    val titleC = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)) ?: "Unknown"
-                    val idC = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID))?:"Unknown"
-                    val albumC = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))?:"Unknown"
-                    val artistC = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))?:"Unknown"
+                    val titleC =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
+                            ?: "Unknown"
+                    val idC = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
+                        ?: "Unknown"
+                    val albumC =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))
+                            ?: "Unknown"
+                    val artistC =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
+                            ?: "Unknown"
                     val pathC = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
-                    val durationC = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
+                    val durationC =
+                        cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
 
                     //Song ImageView icon load
-                    val albumIdC = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)).toString()
+                    val albumIdC =
+                        cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))
+                            .toString()
                     val uri = Uri.parse("content://media/external/audio/albumart")
                     val imageUriC = Uri.withAppendedPath(uri, albumIdC).toString()
 
-                    val music = DomainMusic(id = idC, title = titleC, album = albumC, artist = artistC, path = pathC, duration = durationC, imageUri = imageUriC)
+                    val music = DomainMusic(
+                        id = idC,
+                        title = titleC,
+                        album = albumC,
+                        artist = artistC,
+                        path = pathC,
+                        duration = durationC,
+                        imageUri = imageUriC
+                    )
                     val file = File(music.path)
-                    if(file.exists())
+                    if (file.exists())
                         tempList.add(music)
 
                 } while (cursor.moveToNext())
             cursor.close()
         }
         return tempList
-    }
-
-
-    @SuppressLint("SetTextI18n")
-    private fun setRecyclerView() {
-        MusicListMA =getAllMusic()
-        binding.mainRecyclerID.setHasFixedSize(true)
-        binding.mainRecyclerID.setItemViewCacheSize(13)
-        binding.mainRecyclerID.layoutManager = LinearLayoutManager(this@MainActivity)
-        musicAdapter = MusicAdapter(this@MainActivity, MusicListMA)
-        binding.mainRecyclerID.adapter = musicAdapter
-        binding.mainTotalSongsID.text = "Total Song: " + musicAdapter.itemCount
     }
 
 
@@ -118,6 +136,8 @@ class MainActivity : AppCompatActivity() {
     private fun btnInitial() {
         binding.shuffleBtnID.setOnClickListener {
             val intent = Intent(this, PlayerActivity::class.java)
+            intent.putExtra("index", 0)
+            intent.putExtra("class", "MainActivity")
             startActivity(intent)
         }
 
@@ -147,7 +167,7 @@ class MainActivity : AppCompatActivity() {
 
 
     // Requested Permission for Storage
-    private fun requestPermission() {
+    private fun requestPermission(): Boolean {
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -155,10 +175,13 @@ class MainActivity : AppCompatActivity() {
             PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
-                this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 13
             )
+            return false
         }
+        return true
     }
 
     override fun onRequestPermissionsResult(
@@ -170,6 +193,7 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == 13) {
             if (grantResults.isEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+                setRecyclerView()
             } else
                 ActivityCompat.requestPermissions(
                     this,
@@ -178,5 +202,4 @@ class MainActivity : AppCompatActivity() {
                 )
         }
     }
-
 }

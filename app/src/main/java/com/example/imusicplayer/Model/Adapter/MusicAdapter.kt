@@ -21,7 +21,7 @@ class MusicAdapter(private val context: Context, private val musicList: ArrayLis
         var album = binding.musicViewSongAlbumID
         var duration = binding.musicViewSongDurationID
         var image = binding.musicViewImageViewID
-        var root = binding.root
+        var root = binding.musicViewCardViewID
 
     }
 
