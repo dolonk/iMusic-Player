@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         navigationBar()
         btnInitial()
         initialNavView()
-        if (requestPermission()){
+        if (requestPermission()) {
             setRecyclerView()
         }
 
@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         binding.mainRecyclerID.layoutManager = LinearLayoutManager(this@MainActivity)
         musicAdapter = MusicAdapter(this@MainActivity, MusicListMA)
         binding.mainRecyclerID.adapter = musicAdapter
-        binding.mainTotalSongsID.text = "Total Song: " + musicAdapter.itemCount
+        binding.mainTotalSongsID.text = "Total Songs : " + musicAdapter.itemCount
     }
 
     @SuppressLint("Range")
@@ -191,7 +191,7 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 13) {
-            if (grantResults.isEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
                 setRecyclerView()
             } else
@@ -202,4 +202,6 @@ class MainActivity : AppCompatActivity() {
                 )
         }
     }
+
+
 }
