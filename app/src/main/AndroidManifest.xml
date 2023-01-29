@@ -38,6 +38,7 @@
             android:name=".Model.Ui.MainActivity"
             android:exported="false" />
 
+        <service android:name=".Service.MusicService"/>
     </application>
 
 </manifest>
