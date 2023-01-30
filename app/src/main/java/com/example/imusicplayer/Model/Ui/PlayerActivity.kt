@@ -103,7 +103,6 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
                 musicListPa.addAll(MainActivity.MusicListMA)
                 musicListPa.shuffle()
                 setLayout()
-                createdMediaPlayer()
             }
         }
     }
@@ -126,6 +125,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
         val binder = service as MusicService.MyBinder
         musicService = binder.currentService()
         createdMediaPlayer()
+        musicService!!.showNotification()
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
