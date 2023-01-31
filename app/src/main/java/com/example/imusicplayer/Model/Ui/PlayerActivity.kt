@@ -1,5 +1,6 @@
 package com.example.imusicplayer.Model.Ui
 
+import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
@@ -11,17 +12,20 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.imusicplayer.R
 import com.example.imusicplayer.Service.Domain.DomainMusic
-import com.example.imusicplayer.Service.MusicService
+import com.example.imusicplayer.Service.Services.MusicService
 import com.example.imusicplayer.databinding.ActivityPlayerBinding
 
 class PlayerActivity : AppCompatActivity(), ServiceConnection {
-    private lateinit var binding: ActivityPlayerBinding
+
+
 
     companion object {
         lateinit var musicListPa: ArrayList<DomainMusic>
         var songPosition: Int = 0
         var isPlaying: Boolean = false
         var musicService: MusicService? = null
+        @SuppressLint("StaticFieldLeak")
+        lateinit var binding: ActivityPlayerBinding
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +36,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
 
         //For Start Services
         val intent = Intent(this, MusicService::class.java)
-        bindService(intent,this, BIND_AUTO_CREATE)
+        bindService(intent, this, BIND_AUTO_CREATE)
         startService(intent)
 
         initializeData()
@@ -73,12 +77,14 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
 
     private fun setPauseSong() {
         binding.pPlayPauseID.setIconResource(R.drawable.play_icon)
+        musicService!!.showNotification(R.drawable.play_icon)
         isPlaying = false
-       musicService!!.mediaPlayer!!.pause()
+        musicService!!.mediaPlayer!!.pause()
     }
 
     private fun setPlaySong() {
         binding.pPlayPauseID.setIconResource(R.drawable.pause_icon)
+        musicService!!.showNotification(R.drawable.pause_icon)
         isPlaying = true
         musicService!!.mediaPlayer!!.start()
     }
@@ -109,7 +115,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
 
     private fun createdMediaPlayer() {
         try {
-            if ( musicService!!.mediaPlayer == null)  musicService!!.mediaPlayer = MediaPlayer()
+            if (musicService!!.mediaPlayer == null) musicService!!.mediaPlayer = MediaPlayer()
             musicService!!.mediaPlayer!!.reset()
             musicService!!.mediaPlayer!!.setDataSource(musicListPa[songPosition].path)
             musicService!!.mediaPlayer!!.prepare()
@@ -125,11 +131,10 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
         val binder = service as MusicService.MyBinder
         musicService = binder.currentService()
         createdMediaPlayer()
-        musicService!!.showNotification()
+        musicService!!.showNotification(R.drawable.pause_icon)
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
-     musicService = null
+        musicService = null
     }
-
 }

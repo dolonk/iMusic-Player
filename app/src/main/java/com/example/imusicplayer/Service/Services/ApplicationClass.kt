@@ -1,4 +1,4 @@
-package com.example.imusicplayer.Service
+package com.example.imusicplayer.Service.Services
 
 import android.app.Application
 import android.app.NotificationChannel
