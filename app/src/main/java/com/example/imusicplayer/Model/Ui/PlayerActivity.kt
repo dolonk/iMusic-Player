@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.imusicplayer.R
 import com.example.imusicplayer.Service.Domain.DomainMusic
+import com.example.imusicplayer.Service.Domain.setSongPosition
 import com.example.imusicplayer.Service.Services.MusicService
 import com.example.imusicplayer.databinding.ActivityPlayerBinding
 
@@ -55,17 +56,6 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
             setLayout()
             createdMediaPlayer()
         }
-    }
-
-    private fun setSongPosition(increment: Boolean) {
-        if (increment) {
-            if (musicListPa.size - 1 == songPosition)
-                songPosition = 0
-            else ++songPosition
-        } else
-            if (0 == songPosition)
-                songPosition = musicListPa.size - 1
-            else --songPosition
     }
 
     private fun setPlayPauseSongId() {
@@ -122,6 +112,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
             musicService!!.mediaPlayer!!.start()
             isPlaying = true
             binding.pPlayPauseID.setIconResource(R.drawable.pause_icon)
+            musicService!!.showNotification(R.drawable.pause_icon)
         } catch (e: Exception) {
             return
         }
@@ -131,7 +122,6 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
         val binder = service as MusicService.MyBinder
         musicService = binder.currentService()
         createdMediaPlayer()
-        musicService!!.showNotification(R.drawable.pause_icon)
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
