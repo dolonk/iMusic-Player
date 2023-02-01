@@ -71,6 +71,7 @@
                 android:id="@+id/mainRecyclerID"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/pink_color"
                 android:scrollbarThumbVertical="@drawable/scroll_bar_icon"
                 android:scrollbars="vertical" />
         </LinearLayout>

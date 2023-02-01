@@ -11,12 +11,14 @@ import android.support.v4.media.session.MediaSessionCompat
 import androidx.core.app.NotificationCompat
 import com.example.imusicplayer.Model.Ui.PlayerActivity
 import com.example.imusicplayer.R
+import com.example.imusicplayer.Service.Domain.formatDuration
 import com.example.imusicplayer.Service.Domain.getImageArt
 
 class MusicService : Service() {
     private var myBinder = MyBinder()
     var mediaPlayer: MediaPlayer? = null
     private lateinit var mediaSession: MediaSessionCompat
+    private lateinit var runnable: Runnable
 
 
     override fun onBind(intent: Intent?): IBinder {
@@ -81,9 +83,24 @@ class MusicService : Service() {
             PlayerActivity.musicService!!.mediaPlayer!!.prepare()
             PlayerActivity.binding.pPlayPauseID.setIconResource(R.drawable.pause_icon)
             PlayerActivity.musicService!!.showNotification(R.drawable.pause_icon)
+
+            // for Seekbar process
+            PlayerActivity.binding.pSeekBarTimeStartID.text = formatDuration(mediaPlayer!!.currentPosition.toLong())
+            PlayerActivity.binding.pSeekBarTimeEndID.text = formatDuration(mediaPlayer!!.duration.toLong())
+            PlayerActivity.binding.pSeekBarID.progress = 0
+            PlayerActivity.binding.pSeekBarID.max = mediaPlayer!!.duration
         } catch (e: Exception) {
             return
         }
+    }
+
+    fun setSeekBarSetup(){
+        runnable = Runnable {
+            PlayerActivity.binding.pSeekBarTimeStartID.text = formatDuration(mediaPlayer!!.currentPosition.toLong())
+            PlayerActivity.binding.pSeekBarID.progress = mediaPlayer!!.currentPosition
+            Handler(Looper.getMainLooper()).postDelayed(runnable,200)
+        }
+        Handler(Looper.getMainLooper()).postDelayed(runnable,0)
     }
 
 }

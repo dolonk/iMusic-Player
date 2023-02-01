@@ -8,15 +8,17 @@ import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
+import android.widget.SeekBar
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.imusicplayer.R
 import com.example.imusicplayer.Service.Domain.DomainMusic
+import com.example.imusicplayer.Service.Domain.formatDuration
 import com.example.imusicplayer.Service.Domain.setSongPosition
 import com.example.imusicplayer.Service.Services.MusicService
 import com.example.imusicplayer.databinding.ActivityPlayerBinding
 
-class PlayerActivity : AppCompatActivity(), ServiceConnection {
+class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCompletionListener {
 
 
 
@@ -43,6 +45,22 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
         initializeData()
         setPlayPauseSongId()
         setPreviousNextSong()
+        setSeekBar()
+    }
+
+    private fun setSeekBar() {
+        binding.pSeekBarID.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser){
+                    musicService!!.mediaPlayer!!.seekTo(progress)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
+
+        })
     }
 
     private fun setPreviousNextSong() {
@@ -113,6 +131,15 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
             isPlaying = true
             binding.pPlayPauseID.setIconResource(R.drawable.pause_icon)
             musicService!!.showNotification(R.drawable.pause_icon)
+
+            // for Seekbar process
+            binding.pSeekBarTimeStartID.text = formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
+            binding.pSeekBarTimeEndID.text = formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
+            binding.pSeekBarID.progress = 0
+            binding.pSeekBarID.max = musicService!!.mediaPlayer!!.duration
+
+            // Auto song incriment after the song end
+            musicService!!.mediaPlayer!!.setOnCompletionListener (this)
         } catch (e: Exception) {
             return
         }
@@ -122,9 +149,19 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
         val binder = service as MusicService.MyBinder
         musicService = binder.currentService()
         createdMediaPlayer()
+        musicService!!.setSeekBarSetup()
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
         musicService = null
+    }
+
+    // Auto song incriment after the song end
+    override fun onCompletion(mp: MediaPlayer?) {
+       setSongPosition(increment = true)
+        createdMediaPlayer()
+        try {
+            setLayout()
+        }catch (e:Exception){return}
     }
 }
