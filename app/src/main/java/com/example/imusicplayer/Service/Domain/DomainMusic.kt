@@ -20,14 +20,16 @@ fun formatDuration(duration: Long): String {
 }
 
 fun setSongPosition(increment: Boolean) {
-    if (increment) {
-        if (PlayerActivity.musicListPa.size - 1 == PlayerActivity.songPosition)
-            PlayerActivity.songPosition = 0
-        else ++PlayerActivity.songPosition
-    } else
-        if (0 == PlayerActivity.songPosition)
-            PlayerActivity.songPosition = PlayerActivity.musicListPa.size - 1
-        else --PlayerActivity.songPosition
+    if (!PlayerActivity.repeat){
+        if (increment) {
+            if (PlayerActivity.musicListPa.size - 1 == PlayerActivity.songPosition)
+                PlayerActivity.songPosition = 0
+            else ++PlayerActivity.songPosition
+        } else
+            if (0 == PlayerActivity.songPosition)
+                PlayerActivity.songPosition = PlayerActivity.musicListPa.size - 1
+            else --PlayerActivity.songPosition
+    }
 }
 
 fun getImageArt(path: String): ByteArray? {

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
 import android.widget.SeekBar
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.imusicplayer.R
@@ -29,6 +30,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         var musicService: MusicService? = null
         @SuppressLint("StaticFieldLeak")
         lateinit var binding: ActivityPlayerBinding
+        var repeat:Boolean = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +48,19 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         setPlayPauseSongId()
         setPreviousNextSong()
         setSeekBar()
+        setRepeatSong()
+    }
+
+    private fun setRepeatSong() {
+        binding.pRepeatID.setOnClickListener {
+            if (!repeat){
+                repeat = true
+                binding.pRepeatID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
+            }else{
+                repeat = false
+                binding.pRepeatID.setColorFilter(ContextCompat.getColor(this, R.color.repet))
+            }
+        }
     }
 
     private fun setSeekBar() {
@@ -102,6 +117,9 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             .apply(RequestOptions().placeholder(R.drawable.music_icon))
             .into(binding.pSongPicID)
         binding.pSongTittleID.text = musicListPa[songPosition].title
+        if (repeat){
+            binding.pRepeatID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
+        }
     }
 
     private fun initializeData() {
