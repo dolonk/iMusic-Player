@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.graphics.Color
 import android.media.MediaPlayer
 import android.media.audiofx.AudioEffect
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
@@ -49,7 +50,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setTheme(R.style.coolPink)
         setContentView(binding.root)
-
+        // Application Back Button
         binding.backBtnID.setOnClickListener { finish() }
 
         //For Start Services
@@ -58,12 +59,23 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         startService(intent)
 
         initializeData()
-        setPlayPauseSongId()
-        setPreviousNextSong()
+        setPlayPauseSongIdBtn()
+        setPreviousNextSongBtn()
         setSeekBar()
-        setRepeatSong()
+        setRepeatSongBtn()
         setEqualizerBtn()
         setTimerBtn()
+        setShareBtn()
+    }
+
+    private fun setShareBtn() {
+       binding.shareID.setOnClickListener {
+           val shareIntent = Intent()
+           shareIntent.action = Intent.ACTION_SEND
+           shareIntent.type = "audio/*"
+           shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(musicListPa[songPosition].path))
+           startActivity(Intent.createChooser(shareIntent,"Sharing Music File"))
+       }
     }
 
     private fun setTimerBtn() {
@@ -161,7 +173,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         }
     }
 
-    private fun setRepeatSong() {
+    private fun setRepeatSongBtn() {
         binding.pRepeatID.setOnClickListener {
             if (!repeat) {
                 repeat = true
@@ -188,7 +200,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         })
     }
 
-    private fun setPreviousNextSong() {
+    private fun setPreviousNextSongBtn() {
         binding.pPreviousSongID.setOnClickListener {
             setSongPosition(increment = false)
             setLayout()
@@ -201,7 +213,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         }
     }
 
-    private fun setPlayPauseSongId() {
+    private fun setPlayPauseSongIdBtn() {
         binding.pPlayPauseID.setOnClickListener {
             if (isPlaying) setPauseSong()
             else setPlaySong()
@@ -300,6 +312,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         }
     }
 
+    // for equalizer feature
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
