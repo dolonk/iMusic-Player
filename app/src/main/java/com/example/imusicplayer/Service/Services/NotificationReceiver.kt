@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.imusicplayer.Model.Ui.PlayerActivity
 import com.example.imusicplayer.R
+import com.example.imusicplayer.Service.Domain.exitApplication
 import com.example.imusicplayer.Service.Domain.setSongPosition
 import kotlin.system.exitProcess
 
@@ -20,10 +21,7 @@ class NotificationReceiver : BroadcastReceiver() {
             }
             ApplicationClass.NEXT -> prevNextSong(increment = true, context = context!!)
             ApplicationClass.EXIT -> {
-                PlayerActivity.musicService!!.stopForeground(true)
-                PlayerActivity.musicService!!.mediaPlayer!!.release()
-                PlayerActivity.musicService = null
-                exitProcess(1)
+               exitApplication()
             }
         }
     }

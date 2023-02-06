@@ -4,22 +4,28 @@ import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Color
 import android.media.MediaPlayer
 import android.media.audiofx.AudioEffect
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
+import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.imusicplayer.R
 import com.example.imusicplayer.Service.Domain.DomainMusic
+import com.example.imusicplayer.Service.Domain.exitApplication
 import com.example.imusicplayer.Service.Domain.formatDuration
 import com.example.imusicplayer.Service.Domain.setSongPosition
 import com.example.imusicplayer.Service.Services.MusicService
 import com.example.imusicplayer.databinding.ActivityPlayerBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCompletionListener {
 
@@ -33,6 +39,9 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         @SuppressLint("StaticFieldLeak")
         lateinit var binding: ActivityPlayerBinding
         var repeat: Boolean = false
+        var min15: Boolean = false
+        var min30: Boolean = false
+        var min60: Boolean = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +63,81 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         setSeekBar()
         setRepeatSong()
         setEqualizerBtn()
+        setTimerBtn()
+    }
+
+    private fun setTimerBtn() {
+        binding.timerID.setOnClickListener {
+            val timer = min15 || min30 || min60
+            if (!timer) {
+                //show bottom sheet dialog
+                val dialog = BottomSheetDialog(this@PlayerActivity)
+                dialog.setContentView(R.layout.bottom_sheed_dialog)
+                dialog.show()
+
+                dialog.findViewById<LinearLayout>(R.id.minutes15Id)?.setOnClickListener {
+                    Toast.makeText(baseContext, "Music will stop after 15 minutes", Toast.LENGTH_LONG).show()
+                    binding.timerID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
+                    min15 = true
+                    Thread {
+                        Thread.sleep(15 * 60000)
+                        if (min15) {
+                            exitApplication()
+                        }
+                    }.start()
+                    dialog.dismiss()
+                }
+                dialog.findViewById<LinearLayout>(R.id.minutes30Id)?.setOnClickListener {
+                    Toast.makeText(
+                        baseContext,
+                        "Music will stop after 30 minutes",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    binding.timerID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
+                    min30 = true
+                    Thread {
+                        Thread.sleep(30 * 60000)
+                        if (min30) {
+                            exitApplication()
+                        }
+                    }.start()
+                    dialog.dismiss()
+                }
+                dialog.findViewById<LinearLayout>(R.id.minutes60Id)?.setOnClickListener {
+                    Toast.makeText(
+                        baseContext,
+                        "Music will stop after 60 minutes",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    binding.timerID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
+                    min60 = true
+                    Thread {
+                        Thread.sleep(60 * 60000)
+                        if (min60) {
+                            exitApplication()
+                        }
+                    }.start()
+                    dialog.dismiss()
+                }
+            } else {
+                val builder = MaterialAlertDialogBuilder(this)
+                builder.setTitle("Stop Timer")
+                    .setMessage("Do you want to stop timer?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        min15 = false
+                        min30 = false
+                        min60 = false
+                        binding.timerID.setColorFilter(ContextCompat.getColor(this, R.color.icon_color))
+                    }
+                    .setNegativeButton("No") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                val customDialog = builder.create()
+                customDialog.show()
+                customDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED)
+                customDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED)
+            }
+        }
     }
 
     private fun setEqualizerBtn() {
@@ -68,7 +152,11 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                 eqIntent.putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
                 startActivityForResult(eqIntent, 13)
             } catch (e: Exception) {
-                Toast.makeText(this, "Equalizer Feature not Supported!\n IS support TO Android Q version Above  ", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this,
+                    "Equalizer Feature not Supported!\n IS support TO Android Q version Above  ",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
     }
@@ -80,7 +168,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                 binding.pRepeatID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
             } else {
                 repeat = false
-                binding.pRepeatID.setColorFilter(ContextCompat.getColor(this, R.color.repet))
+                binding.pRepeatID.setColorFilter(ContextCompat.getColor(this, R.color.icon_color))
             }
         }
     }
@@ -141,6 +229,9 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         binding.pSongTittleID.text = musicListPa[songPosition].title
         if (repeat) {
             binding.pRepeatID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
+        }
+        if (min15 || min30 || min60) {
+            binding.timerID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
         }
     }
 
@@ -215,4 +306,5 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         if (requestCode == 13 || resultCode == RESULT_OK)
             return
     }
+
 }

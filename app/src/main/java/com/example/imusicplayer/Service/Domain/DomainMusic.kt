@@ -3,6 +3,7 @@ package com.example.imusicplayer.Service.Domain
 import android.media.MediaMetadataRetriever
 import com.example.imusicplayer.Model.Ui.PlayerActivity
 import java.util.concurrent.TimeUnit
+import kotlin.system.exitProcess
 
 data class DomainMusic(
     var id: String, var title: String,
@@ -36,4 +37,13 @@ fun getImageArt(path: String): ByteArray? {
     val retriever = MediaMetadataRetriever()
     retriever.setDataSource(path)
     return retriever.embeddedPicture
+}
+
+fun exitApplication(){
+    if (PlayerActivity.musicService != null) {
+        PlayerActivity.musicService!!.stopForeground(true)
+        PlayerActivity.musicService!!.mediaPlayer!!.release()
+        PlayerActivity.musicService = null
+    }
+    exitProcess(1)
 }

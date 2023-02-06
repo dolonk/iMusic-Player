@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.imusicplayer.Model.Adapter.MusicAdapter
 import com.example.imusicplayer.R
 import com.example.imusicplayer.Service.Domain.DomainMusic
+import com.example.imusicplayer.Service.Domain.exitApplication
 import com.example.imusicplayer.databinding.ActivityMainBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
@@ -132,12 +133,7 @@ class MainActivity : AppCompatActivity() {
                     builder.setTitle("Exit")
                         .setMessage("Do you want to close iMusic App")
                         .setPositiveButton("Yes") { _, _ ->
-                            if (PlayerActivity.musicService != null) {
-                                PlayerActivity.musicService!!.stopForeground(true)
-                                PlayerActivity.musicService!!.mediaPlayer!!.release()
-                                PlayerActivity.musicService = null
-                            }
-                            exitProcess(1)
+                            exitApplication()
                         }
                         .setNegativeButton("No") { dialog, _ ->
                             dialog.dismiss()
@@ -227,10 +223,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         if (!PlayerActivity.isPlaying && PlayerActivity.musicService != null) {
-            PlayerActivity.musicService!!.stopForeground(true)
-            PlayerActivity.musicService!!.mediaPlayer!!.release()
-            PlayerActivity.musicService = null
-            exitProcess(1)
+         exitApplication()
         }
     }
 
