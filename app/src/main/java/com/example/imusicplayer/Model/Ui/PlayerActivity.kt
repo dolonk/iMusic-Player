@@ -5,10 +5,12 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.media.MediaPlayer
+import android.media.audiofx.AudioEffect
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -22,15 +24,15 @@ import com.example.imusicplayer.databinding.ActivityPlayerBinding
 class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCompletionListener {
 
 
-
     companion object {
         lateinit var musicListPa: ArrayList<DomainMusic>
         var songPosition: Int = 0
         var isPlaying: Boolean = false
         var musicService: MusicService? = null
+
         @SuppressLint("StaticFieldLeak")
         lateinit var binding: ActivityPlayerBinding
-        var repeat:Boolean = false
+        var repeat: Boolean = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +40,8 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setTheme(R.style.coolPink)
         setContentView(binding.root)
+
+        binding.backBtnID.setOnClickListener { finish() }
 
         //For Start Services
         val intent = Intent(this, MusicService::class.java)
@@ -49,14 +53,32 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         setPreviousNextSong()
         setSeekBar()
         setRepeatSong()
+        setEqualizerBtn()
+    }
+
+    private fun setEqualizerBtn() {
+        binding.equalizeID.setOnClickListener {
+            try {
+                val eqIntent = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL)
+                eqIntent.putExtra(
+                    AudioEffect.EXTRA_AUDIO_SESSION,
+                    musicService!!.mediaPlayer!!.audioSessionId
+                )
+                eqIntent.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, baseContext.packageName)
+                eqIntent.putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
+                startActivityForResult(eqIntent, 13)
+            } catch (e: Exception) {
+                Toast.makeText(this, "Equalizer Feature not Supported!\n IS support TO Android Q version Above  ", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun setRepeatSong() {
         binding.pRepeatID.setOnClickListener {
-            if (!repeat){
+            if (!repeat) {
                 repeat = true
                 binding.pRepeatID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
-            }else{
+            } else {
                 repeat = false
                 binding.pRepeatID.setColorFilter(ContextCompat.getColor(this, R.color.repet))
             }
@@ -64,9 +86,9 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     }
 
     private fun setSeekBar() {
-        binding.pSeekBarID.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+        binding.pSeekBarID.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser){
+                if (fromUser) {
                     musicService!!.mediaPlayer!!.seekTo(progress)
                 }
             }
@@ -117,7 +139,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             .apply(RequestOptions().placeholder(R.drawable.music_icon))
             .into(binding.pSongPicID)
         binding.pSongTittleID.text = musicListPa[songPosition].title
-        if (repeat){
+        if (repeat) {
             binding.pRepeatID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
         }
     }
@@ -151,13 +173,15 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             musicService!!.showNotification(R.drawable.pause_icon)
 
             // for Seekbar process
-            binding.pSeekBarTimeStartID.text = formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
-            binding.pSeekBarTimeEndID.text = formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
+            binding.pSeekBarTimeStartID.text =
+                formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
+            binding.pSeekBarTimeEndID.text =
+                formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
             binding.pSeekBarID.progress = 0
             binding.pSeekBarID.max = musicService!!.mediaPlayer!!.duration
 
             // Auto song incriment after the song end
-            musicService!!.mediaPlayer!!.setOnCompletionListener (this)
+            musicService!!.mediaPlayer!!.setOnCompletionListener(this)
         } catch (e: Exception) {
             return
         }
@@ -176,10 +200,19 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
     // Auto song incriment after the song end
     override fun onCompletion(mp: MediaPlayer?) {
-       setSongPosition(increment = true)
+        setSongPosition(increment = true)
         createdMediaPlayer()
         try {
             setLayout()
-        }catch (e:Exception){return}
+        } catch (e: Exception) {
+            return
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 13 || resultCode == RESULT_OK)
+            return
     }
 }
