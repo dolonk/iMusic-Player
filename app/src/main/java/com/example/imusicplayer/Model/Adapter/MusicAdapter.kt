@@ -8,13 +8,14 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.imusicplayer.Model.Ui.MainActivity
 import com.example.imusicplayer.Model.Ui.PlayerActivity
 import com.example.imusicplayer.R
 import com.example.imusicplayer.Service.Domain.DomainMusic
 import com.example.imusicplayer.Service.Domain.formatDuration
 import com.example.imusicplayer.databinding.MusicViewBinding
 
-class MusicAdapter(private val context: Context, private val musicList: ArrayList<DomainMusic>) :
+class MusicAdapter(private var context: Context, private var musicList: ArrayList<DomainMusic>) :
     RecyclerView.Adapter<MusicAdapter.ViewHolder>() {
     class ViewHolder(binding: MusicViewBinding) : RecyclerView.ViewHolder(binding.root) {
         var tittle = binding.musicViewSongTittleID
@@ -40,14 +41,27 @@ class MusicAdapter(private val context: Context, private val musicList: ArrayLis
             .into(holder.image)
 
         holder.root.setOnClickListener {
-            val intent = Intent(context, PlayerActivity::class.java)
-            intent.putExtra("index",position)
-            intent.putExtra("class","MusicAdapter")
-            ContextCompat.startActivity(context,intent,null)
+            when{
+                MainActivity.search -> sendIntent(ref = "MusicAdapterSearch", pos = position)
+                else -> sendIntent(ref = "MusicAdapter", pos = position)
+            }
         }
+    }
+
+    private fun sendIntent(ref: String, pos:Int){
+        val intent = Intent(context, PlayerActivity::class.java)
+        intent.putExtra("index",pos)
+        intent.putExtra("class",ref)
+        ContextCompat.startActivity(context,intent,null)
     }
 
     override fun getItemCount(): Int {
         return musicList.size
+    }
+
+    fun updateMusicList(searchList: ArrayList<DomainMusic>){
+        musicList = ArrayList()
+        musicList.addAll(searchList)
+        notifyDataSetChanged()
     }
 }

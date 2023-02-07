@@ -9,7 +9,9 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.Menu
 import android.view.MenuItem
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -22,7 +24,6 @@ import com.example.imusicplayer.Service.Domain.exitApplication
 import com.example.imusicplayer.databinding.ActivityMainBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
-import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,6 +33,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         lateinit var MusicListMA: ArrayList<DomainMusic>
+        lateinit var musicListSearch : ArrayList<DomainMusic>
+        var search : Boolean = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +53,7 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun setRecyclerView() {
+        search = false
         MusicListMA = getAllMusic()
         binding.mainRecyclerID.setHasFixedSize(true)
         binding.mainRecyclerID.setItemViewCacheSize(13)
@@ -225,6 +229,30 @@ class MainActivity : AppCompatActivity() {
         if (!PlayerActivity.isPlaying && PlayerActivity.musicService != null) {
          exitApplication()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.search_view_menu,menu)
+        val searchView = menu?.findItem(R.id.app_bar_search)?.actionView as androidx.appcompat.widget.SearchView
+        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean = true
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                musicListSearch = ArrayList()
+                if (newText != null){
+                    val  userInput = newText.lowercase()
+                    for (song in MusicListMA){
+                        if (song.title.lowercase().contains(userInput)){
+                            musicListSearch.add(song)
+                            search = true
+                            musicAdapter.updateMusicList(searchList = musicListSearch)
+                        }
+                    }
+                }
+                return true
+            }
+        })
+        return super.onCreateOptionsMenu(menu)
     }
 
 

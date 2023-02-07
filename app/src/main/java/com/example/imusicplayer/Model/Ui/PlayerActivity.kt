@@ -11,7 +11,9 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
+import android.view.Menu
 import android.widget.LinearLayout
+import android.widget.SearchView
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -86,7 +88,6 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                 val dialog = BottomSheetDialog(this@PlayerActivity)
                 dialog.setContentView(R.layout.bottom_sheed_dialog)
                 dialog.show()
-
                 dialog.findViewById<LinearLayout>(R.id.minutes15Id)?.setOnClickListener {
                     Toast.makeText(baseContext, "Music will stop after 15 minutes", Toast.LENGTH_LONG).show()
                     binding.timerID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
@@ -250,6 +251,11 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     private fun initializeData() {
         songPosition = intent.getIntExtra("index", 0)
         when (intent.getStringExtra("class")) {
+            "MusicAdapterSearch" ->{
+                musicListPa = ArrayList()
+                musicListPa.addAll(MainActivity.musicListSearch)
+                setLayout()
+            }
             "MusicAdapter" -> {
                 musicListPa = ArrayList()
                 musicListPa.addAll(MainActivity.MusicListMA)
@@ -319,5 +325,6 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         if (requestCode == 13 || resultCode == RESULT_OK)
             return
     }
+
 
 }
