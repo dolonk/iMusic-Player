@@ -11,9 +11,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
-import android.view.Menu
 import android.widget.LinearLayout
-import android.widget.SearchView
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -45,6 +43,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         var min15: Boolean = false
         var min30: Boolean = false
         var min60: Boolean = false
+        var nowPlayingSongId: String = ""
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -244,6 +243,8 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                 binding.pSeekBarTimeEndID.text = formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
                 binding.pSeekBarID.progress = musicService!!.mediaPlayer!!.currentPosition
                 binding.pSeekBarID.max = musicService!!.mediaPlayer!!.duration
+                if (isPlaying) binding.pPlayPauseID.setIconResource(R.drawable.pause_icon)
+                else binding.pPlayPauseID.setIconResource(R.drawable.play_icon)
             }
             "MusicAdapterSearch" ->{
                 startService()
@@ -294,6 +295,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
             // Auto song incriment after the song end
             musicService!!.mediaPlayer!!.setOnCompletionListener(this)
+            nowPlayingSongId = musicListPa[songPosition].id
         } catch (e: Exception) {
             return
         }
