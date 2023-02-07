@@ -55,11 +55,6 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         // Application Back Button
         binding.backBtnID.setOnClickListener { finish() }
 
-        //For Start Services
-        val intent = Intent(this, MusicService::class.java)
-        bindService(intent, this, BIND_AUTO_CREATE)
-        startService(intent)
-
         initializeData()
         setPlayPauseSongIdBtn()
         setPreviousNextSongBtn()
@@ -101,11 +96,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                     dialog.dismiss()
                 }
                 dialog.findViewById<LinearLayout>(R.id.minutes30Id)?.setOnClickListener {
-                    Toast.makeText(
-                        baseContext,
-                        "Music will stop after 30 minutes",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Toast.makeText(baseContext, "Music will stop after 30 minutes", Toast.LENGTH_LONG).show()
                     binding.timerID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
                     min30 = true
                     Thread {
@@ -117,11 +108,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                     dialog.dismiss()
                 }
                 dialog.findViewById<LinearLayout>(R.id.minutes60Id)?.setOnClickListener {
-                    Toast.makeText(
-                        baseContext,
-                        "Music will stop after 60 minutes",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Toast.makeText(baseContext, "Music will stop after 60 minutes", Toast.LENGTH_LONG).show()
                     binding.timerID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
                     min60 = true
                     Thread {
@@ -251,23 +238,39 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     private fun initializeData() {
         songPosition = intent.getIntExtra("index", 0)
         when (intent.getStringExtra("class")) {
+            "NowPlaying" ->{
+                setLayout()
+                binding.pSeekBarTimeStartID.text = formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
+                binding.pSeekBarTimeEndID.text = formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
+                binding.pSeekBarID.progress = musicService!!.mediaPlayer!!.currentPosition
+                binding.pSeekBarID.max = musicService!!.mediaPlayer!!.duration
+            }
             "MusicAdapterSearch" ->{
+                startService()
                 musicListPa = ArrayList()
                 musicListPa.addAll(MainActivity.musicListSearch)
                 setLayout()
             }
             "MusicAdapter" -> {
+                startService()
                 musicListPa = ArrayList()
                 musicListPa.addAll(MainActivity.MusicListMA)
                 setLayout()
             }
             "MainActivity" -> {
+                startService()
                 musicListPa = ArrayList()
                 musicListPa.addAll(MainActivity.MusicListMA)
                 musicListPa.shuffle()
                 setLayout()
             }
         }
+    }
+
+    private fun startService(){
+        val intent = Intent(this, MusicService::class.java)
+        bindService(intent, this, BIND_AUTO_CREATE)
+        startService(intent)
     }
 
     private fun createdMediaPlayer() {

@@ -11,7 +11,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -75,6 +74,16 @@
                 android:scrollbarThumbVertical="@drawable/scroll_bar_icon"
                 android:scrollbars="vertical" />
         </LinearLayout>
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/nowPlayingSongID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:name="com.example.imusicplayer.Model.Ui.NowPlayingSong"
+            tools:layout="@layout/fragment_now_playing_song"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
