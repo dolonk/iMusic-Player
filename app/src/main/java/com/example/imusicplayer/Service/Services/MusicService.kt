@@ -65,6 +65,7 @@ class MusicService : Service() {
             )
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setOnlyAlertOnce(true)
             .addAction(R.drawable.navigate_previous_back, "Previous", previousPendingIntent)
             .addAction(playPauseBtn, "Play", playPendingIntent)
             .addAction(R.drawable.navigate_next_icon, "Next", nextPendingIntent)
