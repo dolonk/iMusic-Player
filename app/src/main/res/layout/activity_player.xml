@@ -48,7 +48,7 @@
             android:background="@android:color/transparent"
             android:gravity="center"
             android:padding="@dimen/_5sdp"
-            app:srcCompat="@drawable/favourite_icon" />
+            app:srcCompat="@drawable/empty_favourite_icon" />
     </LinearLayout>
 
     <com.google.android.material.imageview.ShapeableImageView

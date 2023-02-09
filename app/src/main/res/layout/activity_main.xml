@@ -40,7 +40,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:drawableTop="@drawable/favourite_icon"
+                    android:drawableTop="@drawable/empty_favourite_icon"
                     android:text="favourites"
                     android:textAllCaps="false"
                     android:textColor="@color/black" />
@@ -72,7 +72,9 @@
                 android:layout_height="match_parent"
                 android:background="@color/pink_color"
                 android:scrollbarThumbVertical="@drawable/scroll_bar_icon"
-                android:scrollbars="vertical" />
+                android:scrollbars="vertical"
+                android:paddingBottom="@dimen/_8sdp"
+               />
         </LinearLayout>
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nowPlayingSongID"

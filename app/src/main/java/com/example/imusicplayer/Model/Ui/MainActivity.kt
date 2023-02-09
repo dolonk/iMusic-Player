@@ -23,6 +23,8 @@ import com.example.imusicplayer.Service.Domain.DomainMusic
 import com.example.imusicplayer.Service.Domain.exitApplication
 import com.example.imusicplayer.databinding.ActivityMainBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
@@ -48,6 +50,16 @@ class MainActivity : AppCompatActivity() {
         setNavItemsView()
         if (requestPermission()) {
             setRecyclerView()
+
+            // for retrieve favourite data using shared preference
+            FavouriteActivity.favouriteSong = ArrayList()
+            val editor = getSharedPreferences("FAVOURITES", MODE_PRIVATE)
+            val jsonString = editor.getString("FavouriteSong", null)
+            val typeToken = object : TypeToken<ArrayList<DomainMusic>>(){}.type
+            if (jsonString !=null){
+                val data: ArrayList<DomainMusic> = GsonBuilder().create().fromJson(jsonString, typeToken)
+                FavouriteActivity.favouriteSong.addAll(data)
+            }
         }
     }
 
@@ -222,6 +234,15 @@ class MainActivity : AppCompatActivity() {
                     13
                 )
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // for storing favourite data using shared preference
+        val editor = getSharedPreferences("FAVOURITES", MODE_PRIVATE).edit()
+        val jsonString = GsonBuilder().create().toJson(FavouriteActivity.favouriteSong)
+        editor.putString("FavouriteSong", jsonString)
+        editor.apply()
     }
 
     override fun onDestroy() {

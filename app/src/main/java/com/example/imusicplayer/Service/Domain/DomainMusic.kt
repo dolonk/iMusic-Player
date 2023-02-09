@@ -1,6 +1,7 @@
 package com.example.imusicplayer.Service.Domain
 
 import android.media.MediaMetadataRetriever
+import com.example.imusicplayer.Model.Ui.FavouriteActivity
 import com.example.imusicplayer.Model.Ui.PlayerActivity
 import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
@@ -46,4 +47,15 @@ fun exitApplication(){
         PlayerActivity.musicService = null
     }
     exitProcess(1)
+}
+
+fun favouriteChecker(id: String): Int{
+    PlayerActivity.isFavourite = false
+    FavouriteActivity.favouriteSong.forEachIndexed { index, domainMusic ->
+        if (id == domainMusic.id){
+            PlayerActivity.isFavourite = true
+            return index
+        }
+    }
+    return -1
 }

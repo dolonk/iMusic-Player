@@ -19,14 +19,13 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.imusicplayer.R
-import com.example.imusicplayer.Service.Domain.DomainMusic
-import com.example.imusicplayer.Service.Domain.exitApplication
-import com.example.imusicplayer.Service.Domain.formatDuration
-import com.example.imusicplayer.Service.Domain.setSongPosition
+import com.example.imusicplayer.Service.Domain.*
 import com.example.imusicplayer.Service.Services.MusicService
 import com.example.imusicplayer.databinding.ActivityPlayerBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 
 class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCompletionListener {
 
@@ -44,6 +43,8 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         var min30: Boolean = false
         var min60: Boolean = false
         var nowPlayingSongId: String = ""
+        var  isFavourite: Boolean = false
+        var fIndex: Int = -1
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +63,21 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         setEqualizerBtn()
         setTimerBtn()
         setShareBtn()
+        setFavouriteBtn()
+    }
+
+    private fun setFavouriteBtn() {
+        binding.favouriteListID.setOnClickListener {
+            if (isFavourite){
+                isFavourite = false
+                binding.favouriteListID.setImageResource(R.drawable.empty_favourite_icon)
+                FavouriteActivity.favouriteSong.removeAt(fIndex)
+            } else{
+                isFavourite = true
+                binding.favouriteListID.setImageResource(R.drawable.favourite_icon)
+                FavouriteActivity.favouriteSong.add(musicListPa[songPosition])
+            }
+        }
     }
 
     private fun setShareBtn() {
@@ -226,17 +242,41 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             .apply(RequestOptions().placeholder(R.drawable.music_icon))
             .into(binding.pSongPicID)
         binding.pSongTittleID.text = musicListPa[songPosition].title
+
+        //Repeat Button
         if (repeat) {
             binding.pRepeatID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
         }
+
+        //Timer Button
         if (min15 || min30 || min60) {
             binding.timerID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
         }
+
+        //Favourite Button
+        fIndex = favouriteChecker(musicListPa[songPosition].id)
+        if (isFavourite){
+            binding.favouriteListID.setImageResource(R.drawable.favourite_icon)
+        } else
+            binding.favouriteListID.setImageResource(R.drawable.empty_favourite_icon)
     }
 
     private fun initializeData() {
         songPosition = intent.getIntExtra("index", 0)
         when (intent.getStringExtra("class")) {
+            "FavouriteShuffle"->{
+                startService()
+                musicListPa = ArrayList()
+                musicListPa.addAll(FavouriteActivity.favouriteSong)
+                musicListPa.shuffle()
+                setLayout()
+            }
+            "FavouriteAdapter" ->{
+                startService()
+                musicListPa = ArrayList()
+                musicListPa.addAll(FavouriteActivity.favouriteSong)
+                setLayout()
+            }
             "NowPlaying" ->{
                 setLayout()
                 binding.pSeekBarTimeStartID.text = formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
@@ -330,6 +370,4 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         if (requestCode == 13 || resultCode == RESULT_OK)
             return
     }
-
-
 }

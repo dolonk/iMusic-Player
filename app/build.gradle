@@ -58,4 +58,7 @@ dependencies {
 
     // for notification media channel
     implementation("androidx.media:media:1.6.0")
+
+    //for sorting objects in shared preferences
+    implementation 'com.google.code.gson:gson:2.10.1'
 }

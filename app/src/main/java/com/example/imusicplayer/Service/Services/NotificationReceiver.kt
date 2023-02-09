@@ -9,6 +9,7 @@ import com.example.imusicplayer.Model.Ui.PlayerActivity
 import com.example.imusicplayer.Model.Ui.NowPlayingSong
 import com.example.imusicplayer.R
 import com.example.imusicplayer.Service.Domain.exitApplication
+import com.example.imusicplayer.Service.Domain.favouriteChecker
 import com.example.imusicplayer.Service.Domain.setSongPosition
 
 class NotificationReceiver : BroadcastReceiver() {
@@ -49,10 +50,18 @@ class NotificationReceiver : BroadcastReceiver() {
             .into(PlayerActivity.binding.pSongPicID)
         PlayerActivity.binding.pSongTittleID.text = PlayerActivity.musicListPa[PlayerActivity.songPosition].title
         playMusicNotification()
+
         //layout update for nowPlaying fragment from notification
         Glide.with(context).load(PlayerActivity.musicListPa[PlayerActivity.songPosition].imageUri)
             .apply(RequestOptions().placeholder(R.drawable.music_icon))
             .into(NowPlayingSong.binding.nowPlayingImageID)
         NowPlayingSong.binding.nowPlayingSongTittleID.text = PlayerActivity.musicListPa[PlayerActivity.songPosition].title
+
+        //layout update for favourite icon from notification
+        PlayerActivity.fIndex = favouriteChecker(PlayerActivity.musicListPa[PlayerActivity.songPosition].id)
+        if (PlayerActivity.isFavourite){
+            PlayerActivity.binding.favouriteListID.setImageResource(R.drawable.favourite_icon)
+        } else
+            PlayerActivity.binding.favouriteListID.setImageResource(R.drawable.empty_favourite_icon)
     }
 }

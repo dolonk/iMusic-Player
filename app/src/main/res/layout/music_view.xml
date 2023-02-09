@@ -10,9 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_10sdp"
-        android:padding="@dimen/_10sdp"
-        app:cardCornerRadius="@dimen/_10sdp"
         android:elevation="@dimen/_1sdp"
+        app:cardCornerRadius="@dimen/_10sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -26,13 +25,12 @@
                 android:id="@+id/musicViewImageViewID"
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
-                android:layout_marginTop="@dimen/_5sdp"
                 android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
                 android:src="@drawable/music_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/musicViewSongTittleID"
@@ -41,8 +39,8 @@
                 android:layout_marginLeft="@dimen/_5sdp"
                 android:gravity="center"
                 android:hint="Song Tittle"
-                android:textSize="@dimen/_14ssp"
                 android:singleLine="true"
+                android:textSize="@dimen/_14ssp"
                 app:layout_constraintStart_toEndOf="@+id/musicViewImageViewID"
                 app:layout_constraintTop_toTopOf="@+id/musicViewImageViewID" />
 
@@ -65,10 +63,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/_5sdp"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:hint="Song Album"
                 android:gravity="center"
-                android:textSize="@dimen/_14ssp"
+                android:hint="Song Album"
                 android:singleLine="true"
+                android:textSize="@dimen/_14ssp"
                 app:layout_constraintBottom_toBottomOf="@+id/musicViewImageViewID"
                 app:layout_constraintEnd_toEndOf="@+id/musicViewSongTittleID"
                 app:layout_constraintStart_toEndOf="@+id/musicViewImageViewID"
