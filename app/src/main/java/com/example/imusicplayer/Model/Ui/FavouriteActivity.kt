@@ -10,6 +10,7 @@ import com.example.imusicplayer.Model.Adapter.FavouriteAdapter
 import com.example.imusicplayer.Model.Adapter.MusicAdapter
 import com.example.imusicplayer.R
 import com.example.imusicplayer.Service.Domain.DomainMusic
+import com.example.imusicplayer.Service.Domain.checkPlaylist
 import com.example.imusicplayer.databinding.ActivityFavouriteBinding
 import com.example.imusicplayer.databinding.ActivityMainBinding
 
@@ -19,12 +20,17 @@ class FavouriteActivity : AppCompatActivity() {
 
     companion object{
         var favouriteSong: ArrayList<DomainMusic> = ArrayList()
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFavouriteBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Data store refresh for song load
+        favouriteSong = checkPlaylist(favouriteSong)
+
         setRecyclerView()
         setShuffleBtn()
     }

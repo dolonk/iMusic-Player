@@ -3,6 +3,7 @@ package com.example.imusicplayer.Service.Domain
 import android.media.MediaMetadataRetriever
 import com.example.imusicplayer.Model.Ui.FavouriteActivity
 import com.example.imusicplayer.Model.Ui.PlayerActivity
+import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
 
@@ -13,14 +14,14 @@ data class DomainMusic(
     var imageUri: String
 )
 
-class Playlist(){
+class Playlist() {
     lateinit var name: String
     lateinit var plyList: ArrayList<DomainMusic>
     lateinit var createdBy: String
     lateinit var createdOn: String
 }
 
-class RefPlaylist(){
+class RefPlaylist() {
     var ref: ArrayList<Playlist> = ArrayList()
 }
 
@@ -33,7 +34,7 @@ fun formatDuration(duration: Long): String {
 }
 
 fun setSongPosition(increment: Boolean) {
-    if (!PlayerActivity.repeat){
+    if (!PlayerActivity.repeat) {
         if (increment) {
             if (PlayerActivity.musicListPa.size - 1 == PlayerActivity.songPosition)
                 PlayerActivity.songPosition = 0
@@ -51,7 +52,7 @@ fun getImageArt(path: String): ByteArray? {
     return retriever.embeddedPicture
 }
 
-fun exitApplication(){
+fun exitApplication() {
     if (PlayerActivity.musicService != null) {
         PlayerActivity.musicService!!.stopForeground(true)
         PlayerActivity.musicService!!.mediaPlayer!!.release()
@@ -60,13 +61,22 @@ fun exitApplication(){
     exitProcess(1)
 }
 
-fun favouriteChecker(id: String): Int{
+fun favouriteChecker(id: String): Int {
     PlayerActivity.isFavourite = false
     FavouriteActivity.favouriteSong.forEachIndexed { index, domainMusic ->
-        if (id == domainMusic.id){
+        if (id == domainMusic.id) {
             PlayerActivity.isFavourite = true
             return index
         }
     }
     return -1
+}
+
+fun checkPlaylist(playlist: ArrayList<DomainMusic>): ArrayList<DomainMusic>{
+    playlist.forEachIndexed { index, music ->
+        val file = File(music.path)
+        if(!file.exists())
+            playlist.removeAt(index)
+    }
+    return playlist
 }

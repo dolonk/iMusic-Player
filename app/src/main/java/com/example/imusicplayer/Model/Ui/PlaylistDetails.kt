@@ -13,6 +13,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.imusicplayer.Model.Adapter.MusicAdapter
 import com.example.imusicplayer.R
 import com.example.imusicplayer.Service.Domain.RefPlaylist
+import com.example.imusicplayer.Service.Domain.checkPlaylist
 import com.example.imusicplayer.Service.Domain.exitApplication
 import com.example.imusicplayer.databinding.ActivityPlaylistDetailsBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -32,6 +33,10 @@ class PlaylistDetails : AppCompatActivity() {
         setTheme(R.style.coolPink)
         setContentView(binding.root)
         currentPlayListPosition = intent.extras?.getInt("index") as Int
+
+        // Data store refresh for song load
+        PlayListActivity.refPlaylist.ref[currentPlayListPosition].plyList =
+            checkPlaylist(playlist = PlayListActivity.refPlaylist.ref[currentPlayListPosition].plyList)
 
         setRecyclerView()
         setShuffleBtn()
