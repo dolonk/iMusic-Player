@@ -13,6 +13,17 @@ data class DomainMusic(
     var imageUri: String
 )
 
+class Playlist(){
+    lateinit var name: String
+    lateinit var plyList: ArrayList<DomainMusic>
+    lateinit var createdBy: String
+    lateinit var createdOn: String
+}
+
+class RefPlaylist(){
+    var ref: ArrayList<Playlist> = ArrayList()
+}
+
 fun formatDuration(duration: Long): String {
     val minutes = TimeUnit.MINUTES.convert(duration, TimeUnit.MILLISECONDS)
     val seconds = (TimeUnit.SECONDS.convert(

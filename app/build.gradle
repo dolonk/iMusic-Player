@@ -61,4 +61,7 @@ dependencies {
 
     //for sorting objects in shared preferences
     implementation 'com.google.code.gson:gson:2.10.1'
+
+    //For material design
+    implementation 'com.google.android.material:material:1.8.0'
 }
