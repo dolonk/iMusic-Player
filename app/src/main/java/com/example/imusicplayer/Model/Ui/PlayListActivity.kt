@@ -95,4 +95,8 @@ class PlayListActivity : AppCompatActivity() {
         binding.pLRecyclerViewId.adapter = playlistAdapter
     }
 
+    override fun onResume() {
+        super.onResume()
+        playlistAdapter.notifyDataSetChanged()
+    }
 }

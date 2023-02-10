@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -20,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.imusicplayer.Model.Adapter.MusicAdapter
 import com.example.imusicplayer.R
 import com.example.imusicplayer.Service.Domain.DomainMusic
+import com.example.imusicplayer.Service.Domain.RefPlaylist
 import com.example.imusicplayer.Service.Domain.exitApplication
 import com.example.imusicplayer.databinding.ActivityMainBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -35,8 +35,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         lateinit var MusicListMA: ArrayList<DomainMusic>
-        lateinit var musicListSearch : ArrayList<DomainMusic>
-        var search : Boolean = false
+        lateinit var musicListSearch: ArrayList<DomainMusic>
+        var search: Boolean = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,13 +55,24 @@ class MainActivity : AppCompatActivity() {
             FavouriteActivity.favouriteSong = ArrayList()
             val editor = getSharedPreferences("FAVOURITES", MODE_PRIVATE)
             val jsonString = editor.getString("FavouriteSong", null)
-            val typeToken = object : TypeToken<ArrayList<DomainMusic>>(){}.type
-            if (jsonString !=null){
-                val data: ArrayList<DomainMusic> = GsonBuilder().create().fromJson(jsonString, typeToken)
+            val typeToken = object : TypeToken<ArrayList<DomainMusic>>() {}.type
+            if (jsonString != null) {
+                val data: ArrayList<DomainMusic> =
+                    GsonBuilder().create().fromJson(jsonString, typeToken)
                 FavouriteActivity.favouriteSong.addAll(data)
+            }
+
+            // for retrieve playlist data using shared preference
+            PlayListActivity.refPlaylist = RefPlaylist()
+            val jsonStringPlaylist = editor.getString("MusicPlaylist", null)
+            if (jsonStringPlaylist != null) {
+                val dataPlaylist: RefPlaylist =
+                    GsonBuilder().create().fromJson(jsonStringPlaylist, RefPlaylist::class.java)
+                PlayListActivity.refPlaylist = dataPlaylist
             }
         }
     }
+
 
     @SuppressLint("SetTextI18n")
     private fun setRecyclerView() {
@@ -238,32 +249,39 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
         // for storing favourite data using shared preference
         val editor = getSharedPreferences("FAVOURITES", MODE_PRIVATE).edit()
         val jsonString = GsonBuilder().create().toJson(FavouriteActivity.favouriteSong)
         editor.putString("FavouriteSong", jsonString)
+
+        // for storing playList data using shared preference
+        val jsonStringPlaylist = GsonBuilder().create().toJson(PlayListActivity.refPlaylist)
+        editor.putString("MusicPlaylist", jsonStringPlaylist)
         editor.apply()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         if (!PlayerActivity.isPlaying && PlayerActivity.musicService != null) {
-         exitApplication()
+            exitApplication()
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.search_view_menu,menu)
-        val searchView = menu?.findItem(R.id.app_bar_search)?.actionView as androidx.appcompat.widget.SearchView
-        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener{
+        menuInflater.inflate(R.menu.search_view_menu, menu)
+        val searchView =
+            menu?.findItem(R.id.app_bar_search)?.actionView as androidx.appcompat.widget.SearchView
+        searchView.setOnQueryTextListener(object :
+            androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = true
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 musicListSearch = ArrayList()
-                if (newText != null){
-                    val  userInput = newText.lowercase()
-                    for (song in MusicListMA){
-                        if (song.title.lowercase().contains(userInput)){
+                if (newText != null) {
+                    val userInput = newText.lowercase()
+                    for (song in MusicListMA) {
+                        if (song.title.lowercase().contains(userInput)) {
                             musicListSearch.add(song)
                             search = true
                             musicAdapter.updateMusicList(searchList = musicListSearch)
@@ -275,6 +293,4 @@ class MainActivity : AppCompatActivity() {
         })
         return super.onCreateOptionsMenu(menu)
     }
-
-
 }

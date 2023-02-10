@@ -9,13 +9,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.imusicplayer.Model.Ui.MainActivity
+import com.example.imusicplayer.Model.Ui.PlayListActivity
 import com.example.imusicplayer.Model.Ui.PlayerActivity
+import com.example.imusicplayer.Model.Ui.PlaylistDetails
 import com.example.imusicplayer.R
 import com.example.imusicplayer.Service.Domain.DomainMusic
 import com.example.imusicplayer.Service.Domain.formatDuration
 import com.example.imusicplayer.databinding.MusicViewBinding
 
-class MusicAdapter(private var context: Context, private var musicList: ArrayList<DomainMusic>) :
+class MusicAdapter(
+    private var context: Context,
+    private var musicList: ArrayList<DomainMusic>,
+    private val playlistDetails: Boolean = false,
+    private val selectionActivity: Boolean = false
+) :
     RecyclerView.Adapter<MusicAdapter.ViewHolder>() {
     class ViewHolder(binding: MusicViewBinding) : RecyclerView.ViewHolder(binding.root) {
         var tittle = binding.musicViewSongTittleID
@@ -40,29 +47,79 @@ class MusicAdapter(private var context: Context, private var musicList: ArrayLis
             .apply(RequestOptions().placeholder(R.drawable.music_icon))
             .into(holder.image)
 
-        holder.root.setOnClickListener {
-            when{
-                MainActivity.search -> sendIntent(ref = "MusicAdapterSearch", pos = position)
-                musicList[position].id == PlayerActivity.nowPlayingSongId ->{
-                    sendIntent("NowPlaying", pos = PlayerActivity.songPosition)
+        when {
+            selectionActivity -> {
+                holder.root.setOnClickListener {
+                    if (addSong(musicList[position]))
+                        holder.root.setCardBackgroundColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.pink_color
+                            )
+                        )
+                    else
+                        holder.root.setCardBackgroundColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.white
+                            )
+                        )
                 }
-                else -> sendIntent(ref = "MusicAdapter", pos = position)
+            }
+            playlistDetails -> {
+                holder.root.setOnClickListener {
+                    sendIntent("PlaylistDetailsAdapter", pos = position)
+                }
+            }
+            else -> {
+                holder.root.setOnClickListener {
+                    when {
+                        MainActivity.search -> sendIntent(
+                            ref = "MusicAdapterSearch",
+                            pos = position
+                        )
+                        musicList[position].id == PlayerActivity.nowPlayingSongId -> {
+                            sendIntent("NowPlaying", pos = PlayerActivity.songPosition)
+                        }
+                        else -> sendIntent(ref = "MusicAdapter", pos = position)
+                    }
+                }
             }
         }
-    }
-
-    private fun sendIntent(ref: String, pos:Int){
-        val intent = Intent(context, PlayerActivity::class.java)
-        intent.putExtra("index",pos)
-        intent.putExtra("class",ref)
-        ContextCompat.startActivity(context,intent,null)
     }
 
     override fun getItemCount(): Int {
         return musicList.size
     }
 
-    fun updateMusicList(searchList: ArrayList<DomainMusic>){
+    private fun addSong(song: DomainMusic): Boolean {
+        PlayListActivity.refPlaylist.ref[PlaylistDetails.currentPlayListPosition].plyList
+            .forEachIndexed { index, domainMusic ->
+                if (song.id == domainMusic.id) {
+                    PlayListActivity.refPlaylist.ref[PlaylistDetails.currentPlayListPosition]
+                        .plyList.removeAt(index)
+                    return false
+                }
+            }
+        PlayListActivity.refPlaylist.ref[PlaylistDetails.currentPlayListPosition]
+            .plyList.add(song)
+        return true
+    }
+
+     fun refreshPlaylist() {
+        musicList = ArrayList()
+        musicList = PlayListActivity.refPlaylist.ref[PlaylistDetails.currentPlayListPosition].plyList
+        notifyDataSetChanged()
+    }
+
+    private fun sendIntent(ref: String, pos: Int) {
+        val intent = Intent(context, PlayerActivity::class.java)
+        intent.putExtra("index", pos)
+        intent.putExtra("class", ref)
+        ContextCompat.startActivity(context, intent, null)
+    }
+
+    fun updateMusicList(searchList: ArrayList<DomainMusic>) {
         musicList = ArrayList()
         musicList.addAll(searchList)
         notifyDataSetChanged()

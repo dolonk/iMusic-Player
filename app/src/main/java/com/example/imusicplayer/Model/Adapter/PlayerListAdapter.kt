@@ -10,16 +10,10 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.imusicplayer.Model.Ui.MainActivity
 import com.example.imusicplayer.Model.Ui.PlayListActivity
-import com.example.imusicplayer.Model.Ui.PlayerActivity
 import com.example.imusicplayer.Model.Ui.PlaylistDetails
 import com.example.imusicplayer.R
-import com.example.imusicplayer.Service.Domain.DomainMusic
 import com.example.imusicplayer.Service.Domain.Playlist
-import com.example.imusicplayer.Service.Domain.exitApplication
-import com.example.imusicplayer.Service.Domain.formatDuration
-import com.example.imusicplayer.databinding.MusicViewBinding
 import com.example.imusicplayer.databinding.PlaylistViewBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -29,7 +23,7 @@ class PlayerListAdapter(
 ) :
     RecyclerView.Adapter<PlayerListAdapter.ViewHolder>() {
     class ViewHolder(binding: PlaylistViewBinding) : RecyclerView.ViewHolder(binding.root) {
-        val imageF = binding.playlistImgId
+        val imageP = binding.playlistImgId
         val songTittleP = binding.playlistNameId
         val root = binding.root
         val delete = binding.playlistDeleteId
@@ -60,9 +54,16 @@ class PlayerListAdapter(
             customDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED)
         }
         holder.root.setOnClickListener {
-            val intent = Intent(context,PlaylistDetails::class.java)
+            val intent = Intent(context, PlaylistDetails::class.java)
             intent.putExtra("index", position)
             ContextCompat.startActivity(context, intent, null)
+        }
+        // playlist folder  image load
+        if (PlayListActivity.refPlaylist.ref[position].plyList.size > 0) {
+            Glide.with(context)
+                .load(PlayListActivity.refPlaylist.ref[position].plyList[0].imageUri)
+                .apply(RequestOptions().placeholder(R.drawable.music_icon))
+                .into(holder.imageP)
         }
     }
 
@@ -70,7 +71,7 @@ class PlayerListAdapter(
         return playList.size
     }
 
-    fun refreshPlaylist(){
+    fun refreshPlaylist() {
         playList = ArrayList()
         playList.addAll(PlayListActivity.refPlaylist.ref)
         notifyDataSetChanged()

@@ -264,6 +264,19 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     private fun initializeData() {
         songPosition = intent.getIntExtra("index", 0)
         when (intent.getStringExtra("class")) {
+            "PlaylistDetailsShuffle"->{
+                startService()
+                musicListPa = ArrayList()
+                musicListPa.addAll(PlayListActivity.refPlaylist.ref[PlaylistDetails.currentPlayListPosition].plyList)
+                musicListPa.shuffle()
+                setLayout()
+            }
+            "PlaylistDetailsAdapter"->{
+                startService()
+                musicListPa = ArrayList()
+                musicListPa.addAll(PlayListActivity.refPlaylist.ref[PlaylistDetails.currentPlayListPosition].plyList)
+                setLayout()
+            }
             "FavouriteShuffle"->{
                 startService()
                 musicListPa = ArrayList()
