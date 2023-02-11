@@ -29,7 +29,7 @@ class FavouriteActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Data store refresh for song load
-        favouriteSong = checkPlaylist(favouriteSong)
+        //favouriteSong = checkPlaylist(favouriteSong)
 
         setRecyclerView()
         setShuffleBtn()

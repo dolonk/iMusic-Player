@@ -34,6 +34,12 @@ class MusicService : Service() {
 
     @SuppressLint("UnspecifiedImmutableFlag")
     fun showNotification(playPauseBtn: Int) {
+        //For Action Notification Intent
+        val intent = Intent(baseContext, PlayerActivity::class.java)
+        intent.putExtra("index",PlayerActivity.songPosition)
+        intent.putExtra("class","NowPlaying")
+        val contentIntent = PendingIntent.getActivity(this, 0, intent, 0)
+
         val previousIntent = Intent(baseContext, NotificationReceiver::class.java).setAction(ApplicationClass.PREVIOUS)
         val previousPendingIntent = PendingIntent.getBroadcast(baseContext, 0, previousIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -55,6 +61,7 @@ class MusicService : Service() {
         }
 
         val notification = NotificationCompat.Builder(baseContext, ApplicationClass.CHANNEL_ID)
+            .setContentIntent(contentIntent)
             .setContentTitle(PlayerActivity.musicListPa[PlayerActivity.songPosition].title)
             .setContentText(PlayerActivity.musicListPa[PlayerActivity.songPosition].artist)
             .setSmallIcon(R.drawable.notification_music_icon)
