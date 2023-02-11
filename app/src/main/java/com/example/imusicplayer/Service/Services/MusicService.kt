@@ -5,20 +5,23 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.*
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.core.app.NotificationCompat
+import com.example.imusicplayer.Model.Ui.NowPlayingSong
 import com.example.imusicplayer.Model.Ui.PlayerActivity
 import com.example.imusicplayer.R
 import com.example.imusicplayer.Service.Domain.formatDuration
 import com.example.imusicplayer.Service.Domain.getImageArt
 
-class MusicService : Service() {
+class MusicService : Service(), AudioManager.OnAudioFocusChangeListener {
     private var myBinder = MyBinder()
     var mediaPlayer: MediaPlayer? = null
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var runnable: Runnable
+    lateinit var audioManager: AudioManager
 
 
     override fun onBind(intent: Intent?): IBinder {
@@ -36,21 +39,44 @@ class MusicService : Service() {
     fun showNotification(playPauseBtn: Int) {
         //For Action Notification Intent
         val intent = Intent(baseContext, PlayerActivity::class.java)
-        intent.putExtra("index",PlayerActivity.songPosition)
-        intent.putExtra("class","NowPlaying")
+        intent.putExtra("index", PlayerActivity.songPosition)
+        intent.putExtra("class", "NowPlaying")
         val contentIntent = PendingIntent.getActivity(this, 0, intent, 0)
 
-        val previousIntent = Intent(baseContext, NotificationReceiver::class.java).setAction(ApplicationClass.PREVIOUS)
-        val previousPendingIntent = PendingIntent.getBroadcast(baseContext, 0, previousIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        val playIntent = Intent(baseContext, NotificationReceiver::class.java).setAction(ApplicationClass.PLAY)
-        val playPendingIntent = PendingIntent.getBroadcast(baseContext, 0, playIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        val nextIntent = Intent(baseContext, NotificationReceiver::class.java).setAction(ApplicationClass.NEXT)
-        val nextPendingIntent = PendingIntent.getBroadcast(baseContext, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        val exitIntent = Intent(baseContext, NotificationReceiver::class.java).setAction(ApplicationClass.EXIT)
-        val exitPendingIntent = PendingIntent.getBroadcast(baseContext, 0, exitIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val previousIntent = Intent(
+            baseContext,
+            NotificationReceiver::class.java
+        ).setAction(ApplicationClass.PREVIOUS)
+        val previousPendingIntent = PendingIntent.getBroadcast(
+            baseContext,
+            0,
+            previousIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val playIntent =
+            Intent(baseContext, NotificationReceiver::class.java).setAction(ApplicationClass.PLAY)
+        val playPendingIntent = PendingIntent.getBroadcast(
+            baseContext,
+            0,
+            playIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val nextIntent =
+            Intent(baseContext, NotificationReceiver::class.java).setAction(ApplicationClass.NEXT)
+        val nextPendingIntent = PendingIntent.getBroadcast(
+            baseContext,
+            0,
+            nextIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val exitIntent =
+            Intent(baseContext, NotificationReceiver::class.java).setAction(ApplicationClass.EXIT)
+        val exitPendingIntent = PendingIntent.getBroadcast(
+            baseContext,
+            0,
+            exitIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
         // for notification image icon
         val imageArt = getImageArt(PlayerActivity.musicListPa[PlayerActivity.songPosition].path)
@@ -85,7 +111,8 @@ class MusicService : Service() {
 
     fun createdMediaPlayer() {
         try {
-            if (PlayerActivity.musicService!!.mediaPlayer == null) PlayerActivity.musicService!!.mediaPlayer = MediaPlayer()
+            if (PlayerActivity.musicService!!.mediaPlayer == null) PlayerActivity.musicService!!.mediaPlayer =
+                MediaPlayer()
             PlayerActivity.musicService!!.mediaPlayer!!.reset()
             PlayerActivity.musicService!!.mediaPlayer!!.setDataSource(PlayerActivity.musicListPa[PlayerActivity.songPosition].path)
             PlayerActivity.musicService!!.mediaPlayer!!.prepare()
@@ -93,23 +120,45 @@ class MusicService : Service() {
             PlayerActivity.musicService!!.showNotification(R.drawable.pause_icon)
 
             // for Seekbar process
-            PlayerActivity.binding.pSeekBarTimeStartID.text = formatDuration(mediaPlayer!!.currentPosition.toLong())
-            PlayerActivity.binding.pSeekBarTimeEndID.text = formatDuration(mediaPlayer!!.duration.toLong())
+            PlayerActivity.binding.pSeekBarTimeStartID.text =
+                formatDuration(mediaPlayer!!.currentPosition.toLong())
+            PlayerActivity.binding.pSeekBarTimeEndID.text =
+                formatDuration(mediaPlayer!!.duration.toLong())
             PlayerActivity.binding.pSeekBarID.progress = 0
             PlayerActivity.binding.pSeekBarID.max = mediaPlayer!!.duration
-            PlayerActivity.nowPlayingSongId = PlayerActivity.musicListPa[PlayerActivity.songPosition].id
+            PlayerActivity.nowPlayingSongId =
+                PlayerActivity.musicListPa[PlayerActivity.songPosition].id
         } catch (e: Exception) {
             return
         }
     }
 
-    fun setSeekBarSetup(){
+    fun setSeekBarSetup() {
         runnable = Runnable {
-            PlayerActivity.binding.pSeekBarTimeStartID.text = formatDuration(mediaPlayer!!.currentPosition.toLong())
+            PlayerActivity.binding.pSeekBarTimeStartID.text =
+                formatDuration(mediaPlayer!!.currentPosition.toLong())
             PlayerActivity.binding.pSeekBarID.progress = mediaPlayer!!.currentPosition
-            Handler(Looper.getMainLooper()).postDelayed(runnable,200)
+            Handler(Looper.getMainLooper()).postDelayed(runnable, 200)
         }
-        Handler(Looper.getMainLooper()).postDelayed(runnable,0)
+        Handler(Looper.getMainLooper()).postDelayed(runnable, 0)
+    }
+
+    // Handling audio manager like call and other changes
+    override fun onAudioFocusChange(focusChange: Int) {
+        if (focusChange <= 0) {
+            PlayerActivity.binding.pPlayPauseID.setIconResource(R.drawable.play_icon)
+            NowPlayingSong.binding.nowPlayingPlayPauseID.setIconResource(R.drawable.play_icon)
+            PlayerActivity.isPlaying = false
+            mediaPlayer!!.pause()
+            showNotification(R.drawable.play_icon)
+        } else {
+            //play music
+            PlayerActivity.binding.pPlayPauseID.setIconResource(R.drawable.pause_icon)
+            NowPlayingSong.binding.nowPlayingPlayPauseID.setIconResource(R.drawable.pause_icon)
+            PlayerActivity.isPlaying = true
+            mediaPlayer!!.start()
+            showNotification(R.drawable.pause_icon)
+        }
     }
 
 }
