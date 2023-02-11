@@ -28,8 +28,13 @@ class FavouriteActivity : AppCompatActivity() {
         binding = ActivityFavouriteBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        try {
+            favouriteSong = checkPlaylist(favouriteSong)
+        } catch (e: Exception) {
+        }
         // Data store refresh for song load
-        //favouriteSong = checkPlaylist(favouriteSong)
+
 
         setRecyclerView()
         setShuffleBtn()

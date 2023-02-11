@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.imusicplayer.Model.Adapter.MusicAdapter
 import com.example.imusicplayer.R
+import com.example.imusicplayer.Service.Domain.DomainMusic
 import com.example.imusicplayer.Service.Domain.RefPlaylist
 import com.example.imusicplayer.Service.Domain.checkPlaylist
 import com.example.imusicplayer.Service.Domain.exitApplication
@@ -32,11 +33,16 @@ class PlaylistDetails : AppCompatActivity() {
         binding = ActivityPlaylistDetailsBinding.inflate(layoutInflater)
         setTheme(R.style.coolPink)
         setContentView(binding.root)
+
         currentPlayListPosition = intent.extras?.getInt("index") as Int
 
         // Data store refresh for song load
-        PlayListActivity.refPlaylist.ref[currentPlayListPosition].plyList =
-            checkPlaylist(playlist = PlayListActivity.refPlaylist.ref[currentPlayListPosition].plyList)
+        try {
+            PlayListActivity.refPlaylist.ref[currentPlayListPosition].plyList =
+                checkPlaylist(playlist = PlayListActivity.refPlaylist.ref[currentPlayListPosition].plyList)
+        } catch (e: Exception) {
+        }
+
 
         setRecyclerView()
         setShuffleBtn()
@@ -54,6 +60,7 @@ class PlaylistDetails : AppCompatActivity() {
                     PlayListActivity.refPlaylist.ref[currentPlayListPosition].plyList.clear()
                     adapter.refreshPlaylist()
                     dialog.dismiss()
+                    setLayout()
                 }
                 .setNegativeButton("No") { dialog, _ ->
                     dialog.dismiss()
@@ -72,15 +79,12 @@ class PlaylistDetails : AppCompatActivity() {
     }
 
     private fun setShuffleBtn() {
-        if (FavouriteActivity.favouriteSong.size < 2) {
-            binding.shuffleBtnPD.visibility = View.INVISIBLE
-        }
-        binding.shuffleBtnPD.setOnClickListener {
-            val intent = Intent(this, PlayerActivity::class.java)
-            intent.putExtra("index", 0)
-            intent.putExtra("class", "PlaylistDetailsShuffle")
-            startActivity(intent)
-        }
+            binding.shuffleBtnPD.setOnClickListener {
+                val intent = Intent(this, PlayerActivity::class.java)
+                intent.putExtra("index", 0)
+                intent.putExtra("class", "PlaylistDetailsShuffle")
+                startActivity(intent)
+            }
     }
 
     private fun setRecyclerView() {
@@ -95,7 +99,7 @@ class PlaylistDetails : AppCompatActivity() {
         binding.playlistDetailsRV.adapter = adapter
     }
 
-    @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
+    @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
 
@@ -107,6 +111,12 @@ class PlaylistDetails : AppCompatActivity() {
 
         binding.playlistNamePD.text =
             PlayListActivity.refPlaylist.ref[currentPlayListPosition].name
+        setLayout()
+        adapter.notifyDataSetChanged()
+    }
+
+    @SuppressLint("SetTextI18n")
+    private  fun setLayout(){
         binding.moreInfoPD.text = "Total ${adapter.itemCount} Song.\n\n" +
                 "Created On: \n${PlayListActivity.refPlaylist.ref[currentPlayListPosition].createdOn}\n\n" +
                 "--${PlayListActivity.refPlaylist.ref[currentPlayListPosition].createdBy}"
@@ -116,7 +126,8 @@ class PlaylistDetails : AppCompatActivity() {
                 .apply(RequestOptions().placeholder(R.drawable.music_icon))
                 .into(binding.playlistImgPD)
             binding.shuffleBtnPD.visibility = View.VISIBLE
+            adapter.notifyDataSetChanged()
         }
-        adapter.notifyDataSetChanged()
+
     }
 }

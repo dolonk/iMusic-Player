@@ -1,5 +1,6 @@
 package com.example.imusicplayer.Model.Ui
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -95,6 +96,7 @@ class PlayListActivity : AppCompatActivity() {
         binding.pLRecyclerViewId.adapter = playlistAdapter
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
         playlistAdapter.notifyDataSetChanged()
