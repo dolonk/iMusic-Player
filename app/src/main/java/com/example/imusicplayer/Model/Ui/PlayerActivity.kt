@@ -45,7 +45,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         var min30: Boolean = false
         var min60: Boolean = false
         var nowPlayingSongId: String = ""
-        var  isFavourite: Boolean = false
+        var isFavourite: Boolean = false
         var fIndex: Int = -1
     }
 
@@ -70,11 +70,11 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
     private fun setFavouriteBtn() {
         binding.favouriteListID.setOnClickListener {
-            if (isFavourite){
+            if (isFavourite) {
                 isFavourite = false
                 binding.favouriteListID.setImageResource(R.drawable.empty_favourite_icon)
                 FavouriteActivity.favouriteSong.removeAt(fIndex)
-            } else{
+            } else {
                 isFavourite = true
                 binding.favouriteListID.setImageResource(R.drawable.favourite_icon)
                 FavouriteActivity.favouriteSong.add(musicListPa[songPosition])
@@ -83,13 +83,13 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     }
 
     private fun setShareBtn() {
-       binding.shareID.setOnClickListener {
-           val shareIntent = Intent()
-           shareIntent.action = Intent.ACTION_SEND
-           shareIntent.type = "audio/*"
-           shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(musicListPa[songPosition].path))
-           startActivity(Intent.createChooser(shareIntent,"Sharing Music File"))
-       }
+        binding.shareID.setOnClickListener {
+            val shareIntent = Intent()
+            shareIntent.action = Intent.ACTION_SEND
+            shareIntent.type = "audio/*"
+            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(musicListPa[songPosition].path))
+            startActivity(Intent.createChooser(shareIntent, "Sharing Music File"))
+        }
     }
 
     private fun setTimerBtn() {
@@ -101,7 +101,11 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                 dialog.setContentView(R.layout.bottom_sheed_dialog)
                 dialog.show()
                 dialog.findViewById<LinearLayout>(R.id.minutes15Id)?.setOnClickListener {
-                    Toast.makeText(baseContext, "Music will stop after 15 minutes", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        baseContext,
+                        "Music will stop after 15 minutes",
+                        Toast.LENGTH_LONG
+                    ).show()
                     binding.timerID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
                     min15 = true
                     Thread {
@@ -113,7 +117,11 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                     dialog.dismiss()
                 }
                 dialog.findViewById<LinearLayout>(R.id.minutes30Id)?.setOnClickListener {
-                    Toast.makeText(baseContext, "Music will stop after 30 minutes", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        baseContext,
+                        "Music will stop after 30 minutes",
+                        Toast.LENGTH_LONG
+                    ).show()
                     binding.timerID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
                     min30 = true
                     Thread {
@@ -125,7 +133,11 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                     dialog.dismiss()
                 }
                 dialog.findViewById<LinearLayout>(R.id.minutes60Id)?.setOnClickListener {
-                    Toast.makeText(baseContext, "Music will stop after 60 minutes", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        baseContext,
+                        "Music will stop after 60 minutes",
+                        Toast.LENGTH_LONG
+                    ).show()
                     binding.timerID.setColorFilter(ContextCompat.getColor(this, R.color.purple_500))
                     min60 = true
                     Thread {
@@ -144,7 +156,12 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                         min15 = false
                         min30 = false
                         min60 = false
-                        binding.timerID.setColorFilter(ContextCompat.getColor(this, R.color.icon_color))
+                        binding.timerID.setColorFilter(
+                            ContextCompat.getColor(
+                                this,
+                                R.color.icon_color
+                            )
+                        )
                     }
                     .setNegativeButton("No") { dialog, _ ->
                         dialog.dismiss()
@@ -257,7 +274,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
         //Favourite Button
         fIndex = favouriteChecker(musicListPa[songPosition].id)
-        if (isFavourite){
+        if (isFavourite) {
             binding.favouriteListID.setImageResource(R.drawable.favourite_icon)
         } else
             binding.favouriteListID.setImageResource(R.drawable.empty_favourite_icon)
@@ -266,42 +283,44 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     private fun initializeData() {
         songPosition = intent.getIntExtra("index", 0)
         when (intent.getStringExtra("class")) {
-            "PlaylistDetailsShuffle"->{
+            "PlaylistDetailsShuffle" -> {
                 startService()
                 musicListPa = ArrayList()
                 musicListPa.addAll(PlayListActivity.refPlaylist.ref[PlaylistDetails.currentPlayListPosition].plyList)
                 musicListPa.shuffle()
                 setLayout()
             }
-            "PlaylistDetailsAdapter"->{
+            "PlaylistDetailsAdapter" -> {
                 startService()
                 musicListPa = ArrayList()
                 musicListPa.addAll(PlayListActivity.refPlaylist.ref[PlaylistDetails.currentPlayListPosition].plyList)
                 setLayout()
             }
-            "FavouriteShuffle"->{
+            "FavouriteShuffle" -> {
                 startService()
                 musicListPa = ArrayList()
                 musicListPa.addAll(FavouriteActivity.favouriteSong)
                 musicListPa.shuffle()
                 setLayout()
             }
-            "FavouriteAdapter" ->{
+            "FavouriteAdapter" -> {
                 startService()
                 musicListPa = ArrayList()
                 musicListPa.addAll(FavouriteActivity.favouriteSong)
                 setLayout()
             }
-            "NowPlaying" ->{
+            "NowPlaying" -> {
                 setLayout()
-                binding.pSeekBarTimeStartID.text = formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
-                binding.pSeekBarTimeEndID.text = formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
+                binding.pSeekBarTimeStartID.text =
+                    formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
+                binding.pSeekBarTimeEndID.text =
+                    formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
                 binding.pSeekBarID.progress = musicService!!.mediaPlayer!!.currentPosition
                 binding.pSeekBarID.max = musicService!!.mediaPlayer!!.duration
                 if (isPlaying) binding.pPlayPauseID.setIconResource(R.drawable.pause_icon)
                 else binding.pPlayPauseID.setIconResource(R.drawable.play_icon)
             }
-            "MusicAdapterSearch" ->{
+            "MusicAdapterSearch" -> {
                 startService()
                 musicListPa = ArrayList()
                 musicListPa.addAll(MainActivity.musicListSearch)
@@ -323,7 +342,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         }
     }
 
-    private fun startService(){
+    private fun startService() {
         val intent = Intent(this, MusicService::class.java)
         bindService(intent, this, BIND_AUTO_CREATE)
         startService(intent)
@@ -357,14 +376,13 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     }
 
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-        val binder = service as MusicService.MyBinder
-        musicService = binder.currentService()
+        if (musicService == null) {
+            val binder = service as MusicService.MyBinder
+            musicService = binder.currentService()
+            musicService!!.audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+            musicService!!.audioManager.requestAudioFocus(musicService, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
+        }
         createdMediaPlayer()
-        musicService!!.setSeekBarSetup()
-
-        //for control audio manager
-        musicService!!.audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
-        musicService!!.audioManager.requestAudioFocus(musicService, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
