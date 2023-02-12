@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.imusicplayer.Model.Adapter.FavouriteAdapter
@@ -32,6 +33,7 @@ class FavouriteActivity : AppCompatActivity() {
         try {
             favouriteSong = checkPlaylist(favouriteSong)
         } catch (e: Exception) {
+            Toast.makeText(this,"Something wrong !", Toast.LENGTH_SHORT).show()
         }
         // Data store refresh for song load
 

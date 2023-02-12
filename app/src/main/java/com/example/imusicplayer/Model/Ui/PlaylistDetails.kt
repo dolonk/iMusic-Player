@@ -6,6 +6,7 @@ import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -41,6 +42,7 @@ class PlaylistDetails : AppCompatActivity() {
             PlayListActivity.refPlaylist.ref[currentPlayListPosition].plyList =
                 checkPlaylist(playlist = PlayListActivity.refPlaylist.ref[currentPlayListPosition].plyList)
         } catch (e: Exception) {
+            Toast.makeText(this,"Something wrong !", Toast.LENGTH_SHORT).show()
         }
 
 
@@ -115,7 +117,7 @@ class PlaylistDetails : AppCompatActivity() {
         adapter.notifyDataSetChanged()
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     private  fun setLayout(){
         binding.moreInfoPD.text = "Total ${adapter.itemCount} Song.\n\n" +
                 "Created On: \n${PlayListActivity.refPlaylist.ref[currentPlayListPosition].createdOn}\n\n" +
@@ -128,6 +130,5 @@ class PlaylistDetails : AppCompatActivity() {
             binding.shuffleBtnPD.visibility = View.VISIBLE
             adapter.notifyDataSetChanged()
         }
-
     }
 }

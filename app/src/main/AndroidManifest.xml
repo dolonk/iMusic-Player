@@ -19,9 +19,18 @@
         android:theme="@style/Theme.iMusicPlayer"
         tools:targetApi="31">
         <activity
+            android:name=".Model.Ui.AboutActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Model.Ui.SettingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Model.Ui.FeedbackActivity"
+            android:exported="false" />
+        <activity
             android:name=".Model.Ui.SelectionActivity"
-            android:screenOrientation="portrait"
             android:exported="false"
+            android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".Model.Ui.PlaylistDetails"
