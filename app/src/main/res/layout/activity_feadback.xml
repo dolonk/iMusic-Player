@@ -6,4 +6,56 @@
     android:layout_height="match_parent"
     tools:context=".Model.Ui.FeedbackActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_15sdp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/topicFAId"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:gravity="center|start"
+            android:hint="@string/topic_feedback"
+            android:inputType="textEmailSubject"
+            android:paddingHorizontal="16dp" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/emailFAId"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:gravity="center|start"
+            android:hint="Email Adress (Optional)"
+            android:inputType="textEmailAddress"
+            android:paddingHorizontal="16dp" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/feedbackMsgFAId"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:gravity="center|start"
+            android:hint="Feedback"
+            android:paddingHorizontal="16dp" />
+
+        <Button
+            android:id="@+id/sendFAId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/white"
+            android:paddingHorizontal="16dp"
+            android:text="Send"
+            android:textAllCaps="false"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

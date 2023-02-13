@@ -1,10 +1,12 @@
 package com.example.imusicplayer.Model.Ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.imusicplayer.Model.Adapter.MusicAdapter
@@ -100,5 +102,10 @@ class PlayListActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         playlistAdapter.notifyDataSetChanged()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        ActivityCompat.recreate(this as Activity)
     }
 }

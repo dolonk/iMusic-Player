@@ -54,24 +54,25 @@ class PlaylistDetails : AppCompatActivity() {
     }
 
     private fun setRemoveBtn() {
-        binding.removeAllPD.setOnClickListener {
-            val builder = MaterialAlertDialogBuilder(this)
-            builder.setTitle("Remove")
-                .setMessage("Do you want to remove all song")
-                .setPositiveButton("Yes") { dialog, _ ->
-                    PlayListActivity.refPlaylist.ref[currentPlayListPosition].plyList.clear()
-                    adapter.refreshPlaylist()
-                    dialog.dismiss()
-                    setLayout()
-                }
-                .setNegativeButton("No") { dialog, _ ->
-                    dialog.dismiss()
-                }
-            val customDialog = builder.create()
-            customDialog.show()
-            customDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED)
-            customDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED)
-        }
+            binding.removeAllPD.setOnClickListener {
+                val builder = MaterialAlertDialogBuilder(this)
+                builder.setTitle("Remove")
+                    .setMessage("Do you want to remove all song")
+                    .setPositiveButton("Yes") { dialog, _ ->
+                        PlayListActivity.refPlaylist.ref[currentPlayListPosition].plyList.clear()
+                        adapter.refreshPlaylist()
+                        dialog.dismiss()
+                        recreate()
+                        setLayout()
+                    }
+                    .setNegativeButton("No") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                val customDialog = builder.create()
+                customDialog.show()
+                customDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED)
+                customDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED)
+            }
     }
 
     private fun setAddBtn() {
@@ -106,7 +107,7 @@ class PlaylistDetails : AppCompatActivity() {
         super.onResume()
 
         // for storing playList data using shared preference
-        val editor = getSharedPreferences("FAVOURITES", MODE_PRIVATE).edit()
+        val editor = getSharedPreferences("PLAYLIST-DETAILS", MODE_PRIVATE).edit()
         val jsonStringPlaylist = GsonBuilder().create().toJson(PlayListActivity.refPlaylist)
         editor.putString("MusicPlaylist", jsonStringPlaylist)
         editor.apply()
