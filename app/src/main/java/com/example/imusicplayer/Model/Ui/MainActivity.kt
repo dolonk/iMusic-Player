@@ -14,6 +14,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.imusicplayer.Model.Adapter.MusicAdapter
@@ -42,6 +43,8 @@ class MainActivity : AppCompatActivity() {
             R.style.coolGreen, R.style.coolBlack)
         val currentThemeNav = arrayOf(R.style.coolPinkNav, R.style.coolBlueNav, R.style.coolPurpleNav,
             R.style.coolGreenNav, R.style.coolBlackNav)
+        val currentGradient = arrayOf(R.drawable.gradient_pink, R.drawable.gradient_blue, R.drawable.gradient_purple,
+            R.drawable.gradient_green, R.drawable.gradient_black)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -279,6 +282,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.search_view_menu, menu)
+        // for setting gradiant
+        findViewById<ConstraintLayout>(R.id.constrainLayoutNav)?.setBackgroundResource(
+            currentGradient[themeIndex])
         val searchView =
             menu?.findItem(R.id.app_bar_search)?.actionView as androidx.appcompat.widget.SearchView
         searchView.setOnQueryTextListener(object :

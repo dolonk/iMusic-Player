@@ -383,6 +383,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             musicService!!.audioManager.requestAudioFocus(musicService, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
         }
         createdMediaPlayer()
+        musicService!!.setSeekBarSetup()
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
