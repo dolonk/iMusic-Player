@@ -8,17 +8,12 @@ import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.imusicplayer.Model.Adapter.MusicAdapter
 import com.example.imusicplayer.Model.Adapter.PlayerListAdapter
 import com.example.imusicplayer.R
 import com.example.imusicplayer.Service.Domain.Playlist
 import com.example.imusicplayer.Service.Domain.RefPlaylist
-import com.example.imusicplayer.Service.Domain.exitApplication
-import com.example.imusicplayer.databinding.ActivityMainBinding
 import com.example.imusicplayer.databinding.ActivityPlayListBinding
 import com.example.imusicplayer.databinding.AddPlaylistDialogBinding
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.text.SimpleDateFormat
 import java.util.*
@@ -34,8 +29,10 @@ class PlayListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(MainActivity.currentTheme[MainActivity.themeIndex])
         binding = ActivityPlayListBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.backBtnID.setOnClickListener { finish() }
 
         setRecyclerView()
         setCreatedPlayList()

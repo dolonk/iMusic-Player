@@ -10,7 +10,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/blue"
+        android:background="?attr/themeColor"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,21 +55,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fVShuffleId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_220sdp"
-        android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginEnd="@dimen/_30sdp"
         android:layout_marginBottom="@dimen/_50sdp"
         android:clickable="true"
         android:focusable="true"
+        android:backgroundTint="@color/white"
+        app:iconSize="@dimen/_30sdp"
+        app:strokeWidth="@dimen/_2sdp"
+        app:strokeColor="?attr/themeColor"
+        app:icon="@drawable/shuffle_icon"
+        app:iconTint="?attr/themeColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pLRecyclerViewId"
-        app:srcCompat="@drawable/shuffle_icon"
+        app:layout_constraintTop_toBottomOf="@+id/fRecyclerViewId"
         tools:ignore="ContentDescription,ImageContrastCheck,SpeakableTextPresentCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

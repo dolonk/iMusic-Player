@@ -46,7 +46,7 @@
                 android:layout_marginRight="@dimen/_5sdp"
                 android:backgroundTint="@android:color/transparent"
                 android:src="@drawable/delete_icon"
-                />
+                app:tint="?attr/themeColor" />
         </LinearLayout>
 
     </LinearLayout>

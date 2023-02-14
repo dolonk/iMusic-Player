@@ -26,16 +26,18 @@ class FavouriteActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(MainActivity.currentTheme[MainActivity.themeIndex])
         binding = ActivityFavouriteBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.backBtnID.setOnClickListener { finish() }
 
-
+        // Data store refresh for song load
         try {
             favouriteSong = checkPlaylist(favouriteSong)
         } catch (e: Exception) {
             Toast.makeText(this,"Something wrong !", Toast.LENGTH_SHORT).show()
         }
-        // Data store refresh for song load
+
 
 
         setRecyclerView()

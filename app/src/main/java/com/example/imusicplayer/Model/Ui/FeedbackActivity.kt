@@ -23,10 +23,11 @@ class FeedbackActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(MainActivity.currentThemeNav[MainActivity.themeIndex])
         binding = ActivityFeadbackBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        supportActionBar?.title = "Feedback"
 
+        supportActionBar?.title = "Feedback"
         setInitial()
     }
 
@@ -45,8 +46,8 @@ class FeedbackActivity : AppCompatActivity() {
             val cm = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
             if (feedbackMsg.isNotEmpty() && subject.isNotEmpty() && (cm.activeNetworkInfo?.isConnectedOrConnecting == true)) {
+//                Thread {
                 try {
-
                     val emailIntent = Intent(Intent.ACTION_SEND)
                     emailIntent.type = "plain/text"
                     emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(userName))
@@ -59,9 +60,6 @@ class FeedbackActivity : AppCompatActivity() {
                         Toast.LENGTH_LONG
                     ).show()
                     finish()
-
-//                        Thread {
-//                            try{
                     // not be work here now because the gmail don permission less secure app access
 //                        val props = Properties().apply {
 //                            put("mail.smtp.host", "smtp.gmail.com")
@@ -80,15 +78,20 @@ class FeedbackActivity : AppCompatActivity() {
 //
 //                        val message = MimeMessage(session).apply {
 //                            setFrom(InternetAddress(userName))
-//                            setRecipients(javax.mail.Message.RecipientType.TO, InternetAddress.parse(userName))
+//                            setRecipients(
+//                                javax.mail.Message.RecipientType.TO,
+//                                InternetAddress.parse(userName)
+//                            )
 //                            setSubject(subject)
 //                            setText(feedbackMsg)
 //                        }
 //                        Transport.send(message)
-                } catch (e: Exception) {
-                    Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
-                }
+                    } catch (e: Exception) {
+                        Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()
+                    }
+//                }.start()
             }
         }
     }
 }
+

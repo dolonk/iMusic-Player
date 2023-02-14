@@ -37,12 +37,20 @@ class MainActivity : AppCompatActivity() {
         lateinit var MusicListMA: ArrayList<DomainMusic>
         lateinit var musicListSearch: ArrayList<DomainMusic>
         var search: Boolean = false
+        var themeIndex = 0
+        val currentTheme = arrayOf(R.style.coolPink, R.style.coolBlue, R.style.coolPurple,
+            R.style.coolGreen, R.style.coolBlack)
+        val currentThemeNav = arrayOf(R.style.coolPinkNav, R.style.coolBlueNav, R.style.coolPurpleNav,
+            R.style.coolGreenNav, R.style.coolBlackNav)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setTheme(R.style.coolPinkNav)
+        // For theme apply
+        val themeEditor = getSharedPreferences("THEMES", MODE_PRIVATE)
+        themeIndex = themeEditor.getInt("themeIndex",0)
+        setTheme(currentThemeNav[themeIndex])
         setContentView(binding.root)
 
         setNavigationBar()

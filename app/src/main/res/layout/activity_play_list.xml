@@ -10,9 +10,9 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?attr/themeColor"
         android:gravity="center"
         android:orientation="horizontal"
-        android:background="@color/blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -33,8 +33,8 @@
             android:id="@+id/textView2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginLeft="@dimen/_50sdp"
+            android:layout_weight="1"
             android:padding="@dimen/_5sdp"
             android:text="PlayList Song"
             android:textSize="@dimen/_14ssp" />
@@ -49,7 +49,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/pLCreatedListId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,10 +59,15 @@
         android:layout_marginBottom="@dimen/_50sdp"
         android:clickable="true"
         android:focusable="true"
+        android:backgroundTint="@color/white"
+        app:iconSize="@dimen/_35sdp"
+        app:strokeWidth="@dimen/_2sdp"
+        app:strokeColor="?attr/themeColor"
+        app:icon="@drawable/add_icon"
+        app:iconTint="?attr/themeColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pLRecyclerViewId"
-        app:srcCompat="@drawable/add_icon"
         tools:ignore="ImageContrastCheck,SpeakableTextPresentCheck" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -51,8 +51,8 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(MainActivity.currentTheme[MainActivity.themeIndex])
         binding = ActivityPlayerBinding.inflate(layoutInflater)
-        setTheme(R.style.coolPink)
         setContentView(binding.root)
         // Application Back Button
         binding.backBtnID.setOnClickListener { finish() }

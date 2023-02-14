@@ -14,6 +14,7 @@ class SelectionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(MainActivity.currentTheme[MainActivity.themeIndex])
         binding = ActivitySelectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.backBtnSA.setOnClickListener { finish() }

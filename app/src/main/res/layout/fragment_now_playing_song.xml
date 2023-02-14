@@ -20,7 +20,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/icon_color"
+            android:background="?attr/themeColor"
             tools:context=".Model.Ui.NowPlayingSong">
 
             <com.google.android.material.imageview.ShapeableImageView
@@ -39,7 +39,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/_10sdp"
-                android:backgroundTint="@color/icon_color"
+                android:backgroundTint="?attr/themeColor"
                 app:icon="@drawable/navigate_next_icon"
                 app:iconSize="@dimen/_50sdp"
                 app:iconTint="@color/white" />
@@ -51,7 +51,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginHorizontal="@dimen/_5sdp"
                 android:layout_toStartOf="@id/nowPlayingNextID"
-                android:backgroundTint="@color/icon_color"
+                android:backgroundTint="?attr/themeColor"
                 app:icon="@drawable/play_icon"
                 app:iconSize="@dimen/_50sdp"
                 app:iconTint="@color/white" />
