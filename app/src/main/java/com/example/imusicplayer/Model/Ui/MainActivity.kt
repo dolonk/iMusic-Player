@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.graphics.Color
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +12,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -66,6 +68,16 @@ class MainActivity : AppCompatActivity() {
         themeIndex = themeEditor.getInt("themeIndex", 0)
         setTheme(currentThemeNav[themeIndex])
         setContentView(binding.root)
+
+        //for nav drawer
+        toggle = ActionBarDrawerToggle(this, binding.root,R.string.open, R.string.close)
+        binding.root.addDrawerListener(toggle)
+        toggle.syncState()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        //checking for dark theme
+        if(themeIndex == 4 &&  resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_NO)
+            Toast.makeText(this, "Black Theme Works Best in Dark Mode!!", Toast.LENGTH_LONG).show()
 
         setNavigationBar()
         btnInitial()
@@ -301,6 +313,9 @@ class MainActivity : AppCompatActivity() {
             MusicListMA = getAllMusic()
             musicAdapter.updateMusicList(MusicListMA)
         }
+
+        // for Custom Design
+        if(PlayerActivity.musicService != null) binding.nowPlayingSongID.visibility = View.VISIBLE
     }
 
     override fun onDestroy() {

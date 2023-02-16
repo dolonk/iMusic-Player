@@ -40,7 +40,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:drawableTop="@drawable/empty_favourite_icon"
+                    android:drawableTop="@drawable/favourite_icon"
                     android:text="favourites"
                     android:textAllCaps="false"
                     android:textColor="@color/black" />

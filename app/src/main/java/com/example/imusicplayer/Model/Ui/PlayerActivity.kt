@@ -5,7 +5,9 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.database.Cursor
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.audiofx.AudioEffect
@@ -315,6 +317,21 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             binding.favouriteListID.setImageResource(R.drawable.favourite_icon)
         } else
             binding.favouriteListID.setImageResource(R.drawable.empty_favourite_icon)
+
+        // Custom layout song design
+        val img = getImageArt(musicListPa[songPosition].path)
+        val image = if (img != null) {
+            BitmapFactory.decodeByteArray(img, 0, img.size)
+        } else {
+            BitmapFactory.decodeResource(
+                resources,
+                R.drawable.music_icon
+            )
+        }
+        val bgColor = getMainColor(image)
+        val gradient = GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, intArrayOf(0xFFFFFF, bgColor))
+        binding.root.background = gradient
+        window?.statusBarColor = bgColor
     }
 
     private fun initializeData() {

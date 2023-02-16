@@ -1,5 +1,6 @@
 package com.example.imusicplayer.Service.Domain
 
+import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.provider.ContactsContract.RawContacts.Data
 import com.example.imusicplayer.Model.Ui.FavouriteActivity
@@ -83,4 +84,11 @@ fun checkPlaylist(playlist: ArrayList<DomainMusic>): ArrayList<DomainMusic>{
             playlist.removeAt(index)
     }
     return playlist
+}
+
+fun getMainColor(img: Bitmap): Int {
+    val newImg = Bitmap.createScaledBitmap(img, 1, 1, true)
+    val color = newImg.getPixel(0, 0)
+    newImg.recycle()
+    return color
 }

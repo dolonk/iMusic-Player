@@ -50,9 +50,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/linearLayout">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/playlistImgPD"
-            android:layout_width="270dp"
+            android:layout_width="@dimen/_180sdp"
             android:layout_height="match_parent"
             android:src="@drawable/music_icon"
             tools:ignore="ImageContrastCheck" />
