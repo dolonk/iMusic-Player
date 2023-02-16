@@ -82,8 +82,7 @@
     </style>
 
 
-    //Theme for Navigation Drawer
-
+<!--    Theme for Navigation Drawer-->
     <style name="coolPinkNav" parent="Theme.MaterialComponents.Light">
         <item name="themeColor">@color/cool_pink</item>
         <item name="colorPrimary">@color/white</item>

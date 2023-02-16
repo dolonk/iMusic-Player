@@ -2,9 +2,9 @@ package com.example.imusicplayer.Model.Ui
 
 import android.annotation.SuppressLint
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.database.Cursor
 import android.graphics.Color
 import android.media.AudioManager
 import android.media.MediaPlayer
@@ -13,6 +13,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
+import android.provider.MediaStore
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.Toast
@@ -26,8 +27,6 @@ import com.example.imusicplayer.Service.Services.MusicService
 import com.example.imusicplayer.databinding.ActivityPlayerBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
 
 class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCompletionListener {
 
@@ -57,7 +56,20 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         // Application Back Button
         binding.backBtnID.setOnClickListener { finish() }
 
-        initializeData()
+        if (intent.data?.scheme.contentEquals("content")) {
+            songPosition = 0
+            val intentService = Intent(this, MusicService::class.java)
+            bindService(intentService, this, BIND_AUTO_CREATE)
+            startService(intentService)
+            musicListPa = ArrayList()
+            musicListPa.add(getMusicDetails(intent.data!!))
+            Glide.with(this).load(getImageArt(musicListPa[songPosition].path) )
+                .apply(RequestOptions().placeholder(R.drawable.music_icon))
+                .into(binding.pSongPicID)
+            binding.pSongTittleID.text = musicListPa[songPosition].title
+        } else {
+            initializeData()
+        }
         setPlayPauseSongIdBtn()
         setPreviousNextSongBtn()
         setSeekBar()
@@ -66,6 +78,30 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         setTimerBtn()
         setShareBtn()
         setFavouriteBtn()
+    }
+
+    private fun getMusicDetails(contentUri: Uri): DomainMusic {
+        var cursor: Cursor? = null
+        try {
+            val projection = arrayOf(MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DURATION)
+            cursor = this.contentResolver.query(contentUri, projection, null, null, null)
+            val dataColumn = cursor?.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
+            val durationColumn = cursor?.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
+            cursor!!.moveToFirst()
+            val path = dataColumn?.let { cursor.getString(it) }
+            val duration = durationColumn?.let { cursor.getLong(it) }!!
+            return DomainMusic(
+                id = "Unknown",
+                title = path.toString(),
+                album = "Unknown",
+                artist = "Unknown",
+                duration = duration,
+                imageUri = "Unknown",
+                path = path.toString()
+            )
+        } finally {
+            cursor?.close()
+        }
     }
 
     private fun setFavouriteBtn() {
@@ -260,6 +296,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         Glide.with(this).load(musicListPa[songPosition].imageUri)
             .apply(RequestOptions().placeholder(R.drawable.music_icon))
             .into(binding.pSongPicID)
+        binding.pSongTittleID.isSelected = true
         binding.pSongTittleID.text = musicListPa[songPosition].title
 
         //Repeat Button
@@ -380,7 +417,11 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             val binder = service as MusicService.MyBinder
             musicService = binder.currentService()
             musicService!!.audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
-            musicService!!.audioManager.requestAudioFocus(musicService, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
+            musicService!!.audioManager.requestAudioFocus(
+                musicService,
+                AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN
+            )
         }
         createdMediaPlayer()
         musicService!!.setSeekBarSetup()
@@ -407,5 +448,10 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 13 || resultCode == RESULT_OK)
             return
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (musicListPa[songPosition].id == "Unknown" && !isPlaying) exitApplication()
     }
 }

@@ -39,12 +39,23 @@ class MainActivity : AppCompatActivity() {
         lateinit var musicListSearch: ArrayList<DomainMusic>
         var search: Boolean = false
         var themeIndex = 0
-        val currentTheme = arrayOf(R.style.coolPink, R.style.coolBlue, R.style.coolPurple,
-            R.style.coolGreen, R.style.coolBlack)
-        val currentThemeNav = arrayOf(R.style.coolPinkNav, R.style.coolBlueNav, R.style.coolPurpleNav,
-            R.style.coolGreenNav, R.style.coolBlackNav)
-        val currentGradient = arrayOf(R.drawable.gradient_pink, R.drawable.gradient_blue, R.drawable.gradient_purple,
-            R.drawable.gradient_green, R.drawable.gradient_black)
+        val currentTheme = arrayOf(
+            R.style.coolPink, R.style.coolBlue, R.style.coolPurple,
+            R.style.coolGreen, R.style.coolBlack
+        )
+        val currentThemeNav = arrayOf(
+            R.style.coolPinkNav, R.style.coolBlueNav, R.style.coolPurpleNav,
+            R.style.coolGreenNav, R.style.coolBlackNav
+        )
+        val currentGradient = arrayOf(
+            R.drawable.gradient_pink, R.drawable.gradient_blue, R.drawable.gradient_purple,
+            R.drawable.gradient_green, R.drawable.gradient_black
+        )
+        var sortOrder = 0
+        val sortingList = arrayOf(
+            MediaStore.Audio.Media.DATE_ADDED + " DESC",  MediaStore.Audio.Media.TITLE,
+            MediaStore.Audio.Media.SIZE + " DESC"
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         // For theme apply
         val themeEditor = getSharedPreferences("THEMES", MODE_PRIVATE)
-        themeIndex = themeEditor.getInt("themeIndex",0)
+        themeIndex = themeEditor.getInt("themeIndex", 0)
         setTheme(currentThemeNav[themeIndex])
         setContentView(binding.root)
 
@@ -88,6 +99,9 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun setRecyclerView() {
         search = false
+        //sorting
+        val sortEditor = getSharedPreferences("SORTING", MODE_PRIVATE)
+        sortOrder = sortEditor.getInt("sortOrder", 0)
         MusicListMA = getAllMusic()
         binding.mainRecyclerID.setHasFixedSize(true)
         binding.mainRecyclerID.setItemViewCacheSize(13)
@@ -101,7 +115,7 @@ class MainActivity : AppCompatActivity() {
     private fun getAllMusic(): ArrayList<DomainMusic> {
         val tempList = ArrayList<DomainMusic>()
         val selection = MediaStore.Audio.Media.IS_MUSIC + "!=0"
-        val projectionManager = arrayOf(
+        val projection = arrayOf(
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ALBUM,
@@ -111,11 +125,13 @@ class MainActivity : AppCompatActivity() {
             MediaStore.Audio.Media.DATA,
             MediaStore.Audio.Media.ALBUM_ID
         )
+
         val cursor = this.contentResolver.query(
-            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projectionManager, selection,
-            null, null, null,
-            //MediaStore.Audio.Media.DATE_ADDED + "DESC"
+            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null,
+            sortingList[sortOrder],
+            null
         )
+
         if (cursor != null) {
             if (cursor.moveToFirst())
                 do {
@@ -146,8 +162,8 @@ class MainActivity : AppCompatActivity() {
                         title = titleC,
                         album = albumC,
                         artist = artistC,
-                        path = pathC,
                         duration = durationC,
+                        path = pathC,
                         imageUri = imageUriC
                     )
                     val file = File(music.path)
@@ -164,7 +180,12 @@ class MainActivity : AppCompatActivity() {
     private fun setNavItemsView() {
         binding.navViewID.setNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.navFeedbackID -> startActivity(Intent(this@MainActivity, FeedbackActivity::class.java))
+                R.id.navFeedbackID -> startActivity(
+                    Intent(
+                        this@MainActivity,
+                        FeedbackActivity::class.java
+                    )
+                )
                 R.id.navSettingID -> startActivity(Intent(this, SettingActivity::class.java))
                 R.id.navAbout -> startActivity(Intent(this, AboutActivity::class.java))
                 R.id.navExitID -> {
@@ -271,6 +292,15 @@ class MainActivity : AppCompatActivity() {
         val jsonStringPlaylist = GsonBuilder().create().toJson(PlayListActivity.refPlaylist)
         editor.putString("MusicPlaylist", jsonStringPlaylist)
         editor.apply()
+
+        //Sorting
+        val sortEditor = getSharedPreferences("SORTING", MODE_PRIVATE)
+        val sortValue = sortEditor.getInt("sortOrder", 0)
+        if (sortOrder != sortValue) {
+            sortOrder = sortValue
+            MusicListMA = getAllMusic()
+            musicAdapter.updateMusicList(MusicListMA)
+        }
     }
 
     override fun onDestroy() {
@@ -284,7 +314,8 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.search_view_menu, menu)
         // for setting gradiant
         findViewById<ConstraintLayout>(R.id.constrainLayoutNav)?.setBackgroundResource(
-            currentGradient[themeIndex])
+            currentGradient[themeIndex]
+        )
         val searchView =
             menu?.findItem(R.id.app_bar_search)?.actionView as androidx.appcompat.widget.SearchView
         searchView.setOnQueryTextListener(object :

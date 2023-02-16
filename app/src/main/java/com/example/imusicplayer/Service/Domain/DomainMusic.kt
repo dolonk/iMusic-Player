@@ -1,6 +1,7 @@
 package com.example.imusicplayer.Service.Domain
 
 import android.media.MediaMetadataRetriever
+import android.provider.ContactsContract.RawContacts.Data
 import com.example.imusicplayer.Model.Ui.FavouriteActivity
 import com.example.imusicplayer.Model.Ui.PlayerActivity
 import java.io.File
@@ -8,10 +9,13 @@ import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
 
 data class DomainMusic(
-    var id: String, var title: String,
-    var album: String, var artist: String,
-    var duration: Long = 0, var path: String,
-    var imageUri: String
+    val id: String,
+    val title: String,
+    val album: String,
+    val artist: String,
+    val duration: Long = 0,
+    val path: String,
+    val imageUri: String
 )
 
 class Playlist() {
