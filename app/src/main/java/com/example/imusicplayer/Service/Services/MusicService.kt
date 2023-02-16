@@ -8,7 +8,9 @@ import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.*
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
 import com.example.imusicplayer.Model.Ui.NowPlayingSong
 import com.example.imusicplayer.Model.Ui.PlayerActivity
@@ -39,6 +41,13 @@ class MusicService : Service(), AudioManager.OnAudioFocusChangeListener {
     fun showNotification(playPauseBtn: Int) {
         //For Action Notification Intent
         val intent = Intent(baseContext, PlayerActivity::class.java)
+
+        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.FLAG_IMMUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
+
         intent.putExtra("index", PlayerActivity.songPosition)
         intent.putExtra("class", "NowPlaying")
         val contentIntent = PendingIntent.getActivity(this, 0, intent, 0)
@@ -51,7 +60,7 @@ class MusicService : Service(), AudioManager.OnAudioFocusChangeListener {
             baseContext,
             0,
             previousIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            flag
         )
         val playIntent =
             Intent(baseContext, NotificationReceiver::class.java).setAction(ApplicationClass.PLAY)
@@ -59,7 +68,7 @@ class MusicService : Service(), AudioManager.OnAudioFocusChangeListener {
             baseContext,
             0,
             playIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            flag
         )
         val nextIntent =
             Intent(baseContext, NotificationReceiver::class.java).setAction(ApplicationClass.NEXT)
@@ -67,7 +76,7 @@ class MusicService : Service(), AudioManager.OnAudioFocusChangeListener {
             baseContext,
             0,
             nextIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            flag
         )
         val exitIntent =
             Intent(baseContext, NotificationReceiver::class.java).setAction(ApplicationClass.EXIT)
@@ -75,7 +84,7 @@ class MusicService : Service(), AudioManager.OnAudioFocusChangeListener {
             baseContext,
             0,
             exitIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            flag
         )
 
         // for notification image icon
@@ -105,15 +114,59 @@ class MusicService : Service(), AudioManager.OnAudioFocusChangeListener {
             .addAction(R.drawable.exit_icon, "Exit", exitPendingIntent)
             .build()
 
+        // for music equalizer
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+            val playbackSpeed = if(PlayerActivity.isPlaying) 1F else 0F
+            mediaSession.setMetadata(
+                MediaMetadataCompat.Builder()
+                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, mediaPlayer!!.duration.toLong())
+                .build())
+            val playBackState = PlaybackStateCompat.Builder()
+                .setState(PlaybackStateCompat.STATE_PLAYING, mediaPlayer!!.currentPosition.toLong(), playbackSpeed)
+                .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+                .build()
+            mediaSession.setPlaybackState(playBackState)
+            mediaSession.setCallback(object: MediaSessionCompat.Callback(){
+
+                //called when headphones buttons are pressed
+                //currently only pause or play music on button click
+                override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
+                    if(PlayerActivity.isPlaying){
+                        //pause music
+                        PlayerActivity.binding.pPlayPauseID.setIconResource(R.drawable.play_icon)
+                        NowPlayingSong.binding.nowPlayingPlayPauseID.setIconResource(R.drawable.play_icon)
+                        PlayerActivity.isPlaying = false
+                        mediaPlayer!!.pause()
+                        showNotification(R.drawable.play_icon)
+                    }else{
+                        //play music
+                        PlayerActivity.binding.pPlayPauseID.setIconResource(R.drawable.pause_icon)
+                        NowPlayingSong.binding.nowPlayingPlayPauseID.setIconResource(R.drawable.pause_icon)
+                        PlayerActivity.isPlaying = true
+                        mediaPlayer!!.start()
+                        showNotification(R.drawable.pause_icon)
+                    }
+                    return super.onMediaButtonEvent(mediaButtonEvent)
+                }
+                override fun onSeekTo(pos: Long) {
+                    super.onSeekTo(pos)
+                    mediaPlayer!!.seekTo(pos.toInt())
+                    val playBackStateNew = PlaybackStateCompat.Builder()
+                        .setState(PlaybackStateCompat.STATE_PLAYING, mediaPlayer!!.currentPosition.toLong(), playbackSpeed)
+                        .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+                        .build()
+                    mediaSession.setPlaybackState(playBackStateNew)
+                }
+            })
+        }
 
         startForeground(13, notification)
     }
 
     fun createdMediaPlayer() {
         try {
-            if (PlayerActivity.musicService!!.mediaPlayer == null) PlayerActivity.musicService!!.mediaPlayer =
-                MediaPlayer()
-            PlayerActivity.musicService!!.mediaPlayer!!.reset()
+            if (mediaPlayer == null) mediaPlayer = MediaPlayer()
+            mediaPlayer!!.reset()
             PlayerActivity.musicService!!.mediaPlayer!!.setDataSource(PlayerActivity.musicListPa[PlayerActivity.songPosition].path)
             PlayerActivity.musicService!!.mediaPlayer!!.prepare()
             PlayerActivity.binding.pPlayPauseID.setIconResource(R.drawable.pause_icon)
@@ -159,6 +212,11 @@ class MusicService : Service(), AudioManager.OnAudioFocusChangeListener {
             mediaPlayer!!.start()
             showNotification(R.drawable.pause_icon)
         }
+    }
+
+    //for making persistent
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return START_STICKY
     }
 
 }
