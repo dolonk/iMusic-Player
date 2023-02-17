@@ -41,7 +41,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:drawableTop="@drawable/favourite_icon"
-                    android:text="favourites"
+                    android:text="favourite"
                     android:textAllCaps="false"
                     android:textColor="@color/black" />
                 <!--Playlists Button-->
@@ -55,6 +55,19 @@
                     android:text="playlist"
                     android:textAllCaps="false"
                     android:textColor="@color/black" />
+
+                <Button
+                    android:id="@+id/playNextBtn"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:drawableTop="@drawable/play_next_icon"
+                    android:text="Play next"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black"
+                   />
+
             </LinearLayout>
 
             <!--Total Songs Button-->

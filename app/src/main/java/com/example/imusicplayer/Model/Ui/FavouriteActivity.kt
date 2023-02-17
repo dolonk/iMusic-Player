@@ -21,6 +21,7 @@ class FavouriteActivity : AppCompatActivity() {
 
     companion object{
         var favouriteSong: ArrayList<DomainMusic> = ArrayList()
+        var favouritesChanged: Boolean = false
 
     }
 
@@ -38,13 +39,13 @@ class FavouriteActivity : AppCompatActivity() {
             Toast.makeText(this,"Something wrong !", Toast.LENGTH_SHORT).show()
         }
 
-
-
         setRecyclerView()
         setShuffleBtn()
+        if(favouriteSong.isNotEmpty()) binding.instructionFV.visibility = View.GONE
     }
 
     private fun setShuffleBtn() {
+        favouritesChanged = false
         if (favouriteSong.size<2){
           binding.fVShuffleId.visibility = View.INVISIBLE
         }
@@ -62,5 +63,13 @@ class FavouriteActivity : AppCompatActivity() {
         binding.fRecyclerViewId.layoutManager = GridLayoutManager(this, 3)
         favouriteAdapter = FavouriteAdapter(this, favouriteSong)
         binding.fRecyclerViewId.adapter = favouriteAdapter
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(favouritesChanged) {
+            favouriteAdapter.updateFavourites(favouriteSong)
+            favouritesChanged = false
+        }
     }
 }

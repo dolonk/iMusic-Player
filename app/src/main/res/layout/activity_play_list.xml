@@ -33,12 +33,12 @@
             android:id="@+id/textView2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/_50sdp"
+            android:layout_marginLeft="@dimen/_40sdp"
             android:layout_weight="1"
             android:padding="@dimen/_5sdp"
             android:text="PlayList Song"
             android:textColor="@color/white"
-            android:textSize="@dimen/_14ssp"
+            android:textSize="@dimen/_18ssp"
             android:textStyle="bold" />
     </LinearLayout>
 

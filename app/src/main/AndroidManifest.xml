@@ -21,6 +21,11 @@
         android:theme="@style/Theme.iMusicPlayer"
         tools:targetApi="31">
         <activity
+            android:name=".Model.Ui.PlayNextActivity"
+            android:exported="false"
+            android:label="@string/title_activity_play_next"
+            android:theme="@style/Theme.iMusicPlayer.NoActionBar" />
+        <activity
             android:name=".Model.Ui.AboutActivity"
             android:exported="false"
             android:screenOrientation="portrait"
@@ -74,7 +79,6 @@
                     android:scheme="content" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".Model.Ui.SplashScreen"
             android:exported="true"

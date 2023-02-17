@@ -236,6 +236,9 @@ class MainActivity : AppCompatActivity() {
         binding.playlistBtnID.setOnClickListener {
             startActivity(Intent(this, PlayListActivity::class.java))
         }
+        binding.playNextBtn.setOnClickListener {
+            startActivity(Intent(this, PlayNextActivity::class.java))
+        }
     }
 
 

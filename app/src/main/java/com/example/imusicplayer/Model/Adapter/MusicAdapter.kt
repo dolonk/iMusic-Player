@@ -2,20 +2,28 @@ package com.example.imusicplayer.Model.Adapter
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.text.SpannableStringBuilder
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.text.bold
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.imusicplayer.Model.Ui.MainActivity
-import com.example.imusicplayer.Model.Ui.PlayListActivity
-import com.example.imusicplayer.Model.Ui.PlayerActivity
-import com.example.imusicplayer.Model.Ui.PlaylistDetails
+import com.example.imusicplayer.Model.Ui.*
 import com.example.imusicplayer.R
 import com.example.imusicplayer.Service.Domain.DomainMusic
 import com.example.imusicplayer.Service.Domain.formatDuration
+import com.example.imusicplayer.Service.Domain.setDialogBtnBackground
+import com.example.imusicplayer.databinding.DetailsViewBinding
+import com.example.imusicplayer.databinding.MoreFeaturesBinding
 import com.example.imusicplayer.databinding.MusicViewBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 
 class MusicAdapter(
     private var context: Context,
@@ -46,6 +54,60 @@ class MusicAdapter(
         Glide.with(context).load(musicList[position].imageUri)
             .apply(RequestOptions().placeholder(R.drawable.music_icon))
             .into(holder.image)
+
+        //for play next feature
+        if (!selectionActivity)
+            holder.root.setOnLongClickListener {
+                val customDialog =
+                    LayoutInflater.from(context).inflate(R.layout.more_features, holder.root, false)
+                val bindingMF = MoreFeaturesBinding.bind(customDialog)
+                val dialog = MaterialAlertDialogBuilder(context).setView(customDialog)
+                    .create()
+                dialog.show()
+                dialog.window?.setBackgroundDrawable(ColorDrawable(0x99000000.toInt()))
+
+                bindingMF.AddToPNBtn.setOnClickListener {
+                    try {
+                        if (PlayNextActivity.playNextList.isEmpty()) {
+                            PlayNextActivity.playNextList.add(PlayerActivity.musicListPa[PlayerActivity.songPosition])
+                            PlayerActivity.songPosition = 0
+                        }
+                        PlayNextActivity.playNextList.add(musicList[position])
+                        PlayerActivity.musicListPa = ArrayList()
+                        PlayerActivity.musicListPa.addAll(PlayNextActivity.playNextList)
+                    } catch (e: Exception) {
+                        Snackbar.make(context, holder.root, "Play A Song First!!", 3000).show()
+                    }
+                    dialog.dismiss()
+                }
+
+                bindingMF.infoBtn.setOnClickListener {
+                    dialog.dismiss()
+                    val detailsDialog = LayoutInflater.from(context)
+                        .inflate(R.layout.details_view, bindingMF.root, false)
+                    val binder = DetailsViewBinding.bind(detailsDialog)
+                    binder.detailsTV.setTextColor(Color.WHITE)
+                    binder.root.setBackgroundColor(Color.TRANSPARENT)
+                    val dDialog = MaterialAlertDialogBuilder(context)
+//                        .setBackground(ColorDrawable(0x99000000.toInt()))
+                        .setView(detailsDialog)
+                        .setPositiveButton("OK") { self, _ -> self.dismiss() }
+                        .setCancelable(false)
+                        .create()
+                    dDialog.show()
+                    dDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED)
+                    setDialogBtnBackground(context, dDialog)
+                    dDialog.window?.setBackgroundDrawable(ColorDrawable(0x99000000.toInt()))
+                    val str = SpannableStringBuilder().bold { append("DETAILS\n\nName: ") }
+                        .append(musicList[position].title)
+                        .bold { append("\n\nDuration: ") }
+                        .append(DateUtils.formatElapsedTime(musicList[position].duration / 1000))
+                        .bold { append("\n\nLocation: ") }.append(musicList[position].path)
+                    binder.detailsTV.text = str
+                }
+
+                return@setOnLongClickListener true
+            }
 
         when {
             selectionActivity -> {

@@ -58,6 +58,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         // Application Back Button
         binding.backBtnID.setOnClickListener { finish() }
 
+        //Auto song increment
         if (intent.data?.scheme.contentEquals("content")) {
             songPosition = 0
             val intentService = Intent(this, MusicService::class.java)
@@ -295,6 +296,8 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     }
 
     private fun setLayout() {
+        fIndex = favouriteChecker(musicListPa[songPosition].id)
+
         Glide.with(this).load(musicListPa[songPosition].imageUri)
             .apply(RequestOptions().placeholder(R.drawable.music_icon))
             .into(binding.pSongPicID)
@@ -337,32 +340,6 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     private fun initializeData() {
         songPosition = intent.getIntExtra("index", 0)
         when (intent.getStringExtra("class")) {
-            "PlaylistDetailsShuffle" -> {
-                startService()
-                musicListPa = ArrayList()
-                musicListPa.addAll(PlayListActivity.refPlaylist.ref[PlaylistDetails.currentPlayListPosition].plyList)
-                musicListPa.shuffle()
-                setLayout()
-            }
-            "PlaylistDetailsAdapter" -> {
-                startService()
-                musicListPa = ArrayList()
-                musicListPa.addAll(PlayListActivity.refPlaylist.ref[PlaylistDetails.currentPlayListPosition].plyList)
-                setLayout()
-            }
-            "FavouriteShuffle" -> {
-                startService()
-                musicListPa = ArrayList()
-                musicListPa.addAll(FavouriteActivity.favouriteSong)
-                musicListPa.shuffle()
-                setLayout()
-            }
-            "FavouriteAdapter" -> {
-                startService()
-                musicListPa = ArrayList()
-                musicListPa.addAll(FavouriteActivity.favouriteSong)
-                setLayout()
-            }
             "NowPlaying" -> {
                 setLayout()
                 binding.pSeekBarTimeStartID.text =
@@ -374,26 +351,30 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                 if (isPlaying) binding.pPlayPauseID.setIconResource(R.drawable.pause_icon)
                 else binding.pPlayPauseID.setIconResource(R.drawable.play_icon)
             }
+            "PlaylistDetailsShuffle" -> {
+                initServiceAndPlaylist(PlayListActivity.refPlaylist.ref[PlaylistDetails.currentPlayListPosition].plyList, shuffle = false)
+            }
+            "PlaylistDetailsAdapter" -> {
+                initServiceAndPlaylist(PlayListActivity.refPlaylist.ref[PlaylistDetails.currentPlayListPosition].plyList, shuffle = true)
+            }
+            "FavouriteShuffle" -> {
+                initServiceAndPlaylist(FavouriteActivity.favouriteSong, shuffle = true)
+            }
+            "FavouriteAdapter" -> {
+                initServiceAndPlaylist(FavouriteActivity.favouriteSong, shuffle = false)
+            }
             "MusicAdapterSearch" -> {
-                startService()
-                musicListPa = ArrayList()
-                musicListPa.addAll(MainActivity.musicListSearch)
-                setLayout()
+                initServiceAndPlaylist(MainActivity.musicListSearch, shuffle = false)
             }
             "MusicAdapter" -> {
-                startService()
-                musicListPa = ArrayList()
-                musicListPa.addAll(MainActivity.MusicListMA)
-                setLayout()
+                initServiceAndPlaylist(MainActivity.MusicListMA, shuffle = false)
             }
             "MainActivity" -> {
-                startService()
-                musicListPa = ArrayList()
-                musicListPa.addAll(MainActivity.MusicListMA)
-                musicListPa.shuffle()
-                setLayout()
+                initServiceAndPlaylist(MainActivity.MusicListMA, shuffle = true)
             }
+            "PlayNextActivity"->initServiceAndPlaylist(PlayNextActivity.playNextList, shuffle = false, playNext = true)
         }
+        if (musicService!= null && !isPlaying) setPlaySong()
     }
 
     private fun startService() {
@@ -450,13 +431,26 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
     // Auto song incriment after the song end
     override fun onCompletion(mp: MediaPlayer?) {
-        setSongPosition(increment = true)
-        createdMediaPlayer()
         try {
+            setSongPosition(increment = true)
+            createdMediaPlayer()
             setLayout()
-        } catch (e: Exception) {
-            return
-        }
+        } catch (e: Exception){}
+
+        // play_next layout update here
+        Glide.with(applicationContext)
+            .load(musicListPa[songPosition].imageUri)
+            .apply(RequestOptions().placeholder(R.drawable.music_icon))
+            .into(binding.pSongPicID)
+        binding.pSongTittleID.isSelected = true
+        binding.pSongTittleID.text = musicListPa[songPosition].title
+
+        //NowPlayingSong layout update for play_next song
+        NowPlayingSong.binding.nowPlayingSongTittleID.isSelected = true
+        Glide.with(applicationContext).load(musicListPa[songPosition].imageUri)
+            .apply(RequestOptions().placeholder(R.drawable.music_icon))
+            .into(NowPlayingSong.binding.nowPlayingImageID)
+        NowPlayingSong.binding.nowPlayingSongTittleID.text = musicListPa[songPosition].title
     }
 
     // for equalizer feature
@@ -470,5 +464,16 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     override fun onDestroy() {
         super.onDestroy()
         if (musicListPa[songPosition].id == "Unknown" && !isPlaying) exitApplication()
+    }
+
+    private fun initServiceAndPlaylist(playlist: ArrayList<DomainMusic>, shuffle: Boolean, playNext: Boolean = false){
+        val intent = Intent(this, MusicService::class.java)
+        bindService(intent, this, BIND_AUTO_CREATE)
+        startService(intent)
+        musicListPa = ArrayList()
+        musicListPa.addAll(playlist)
+        if(shuffle) musicListPa.shuffle()
+        setLayout()
+        if(!playNext) PlayNextActivity.playNextList = ArrayList()
     }
 }

@@ -137,5 +137,11 @@
         <item name="colorOnSecondary">@color/black</item>
         <item name="android:statusBarColor" tools:targetApi="l">?attr/themeColor</item>
     </style>
+    <style name="Theme.iMusicPlayer.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="Theme.iMusicPlayer.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.iMusicPlayer.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>
